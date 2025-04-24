@@ -1,0 +1,26 @@
+﻿<Window x:Class="Seismoscope.View.SensorDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sensor Dialog" Height="225" Width="400">
+    <StackPanel Margin="10">
+        <StackPanel Visibility="{Binding ShowName, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="Nom:"/>
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding ShowFrequency, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="Fréquence:"/>
+            <TextBox Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding ShowTreshold, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="Seuil:"/>
+            <TextBox Text="{Binding Treshold, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">
+            <Button Content="Valider" Command="{Binding ConfirmCommand}" Margin="5"/>
+            <Button Content="Annuler" Command="{Binding CancelCommand}" Margin="5"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

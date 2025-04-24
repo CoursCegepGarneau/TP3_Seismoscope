@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="Seismoscope.View.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Seismoscope.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0"
+                    Background="#EEE"
+                    Margin="5">
+            <Button Content="Accueil"
+                    Margin="10"
+                    Height="25"
+                    Command=""/>
+            <Button Content="Se déconnecter"
+                    Margin="10"
+                    Height="25"
+                    Command="{Binding LogoutCommand}"
+                    Visibility="{Binding UserSessionService.IsUserConnected, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+            <!--SECTION DEBUG POUR VIEW SENSOR-->
+            <Button Content="Voir les capteurs" 
+                Width="150"
+                Margin="10"
+                Command="{Binding NavigateToSensorViewCommand}"/>
+
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="10">
+            <TextBlock Text="{Binding WelcomeMessage}" 
+                       FontSize="40" 
+                       FontWeight="Bold" 
+                       Margin="10"/>
+
+            <StackPanel Visibility="{Binding IsEmploye, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Border Background="White"
+                        BorderBrush="LightGray"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="15"
+                        Margin="20"
+                        Width="300"
+                        HorizontalAlignment="Left">
+                    <StackPanel>
+                        <TextBlock Text="Vous êtes un employé"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#462AD8"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="📍 Station assignée"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#462AD8"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding StationInformations}" 
+                                   FontSize="16"
+                                   FontFamily="Consolas"
+                                   Margin="10"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Zone ADMIN -->
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="🗺️ Vous êtes un admin. Interface administrateur à venir..."
+                           FontSize="18"
+                           Foreground="DarkRed"
+                           FontWeight="Bold"
+                           Margin="20"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
