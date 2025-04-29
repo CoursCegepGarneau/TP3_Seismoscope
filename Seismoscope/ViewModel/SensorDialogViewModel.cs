@@ -39,6 +39,28 @@ namespace Seismoscope.ViewModel
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
 
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                _errorMessage = value;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
+
+        private Visibility _errorVisibility = Visibility.Collapsed;
+        public Visibility ErrorVisibility
+        {
+            get => _errorVisibility;
+            set
+            {
+                _errorVisibility = value;
+                OnPropertyChanged(nameof(ErrorVisibility));
+            }
+        }
+
         // Action appelée par la vue pour fermer la fenêtre
         public Action<bool> CloseAction { get; set; }
 
@@ -55,14 +77,21 @@ namespace Seismoscope.ViewModel
             {
                 if (!double.TryParse(Frequency, out double newFreq))
                 {
-                    MessageBox.Show("Veuillez entrer une valeur numérique valide pour la fréquence.");
-                    return;  // Ne ferme pas le dialogue
-                }
-                if (newFreq < 1 || newFreq > 100)
-                {
-                    MessageBox.Show("La fréquence doit être comprise entre 1 et 100.");
+                    ErrorMessage="Veuillez entrer une valeur numérique valide pour la fréquence.";
+                    ErrorVisibility = Visibility.Visible;
                     return;
                 }
+                else if (newFreq < 1 || newFreq > 100)
+                {
+                    ErrorMessage="La fréquence doit être comprise entre 1 et 100.";
+                    ErrorVisibility = Visibility.Visible;
+                    return;
+                }
+                else
+                {
+                    ErrorVisibility = Visibility.Collapsed;
+                }
+                
             }
 
             // Validation pour le seuil si nécessaire
@@ -70,13 +99,19 @@ namespace Seismoscope.ViewModel
             {
                 if (!double.TryParse(Treshold, out double newThr))
                 {
-                    MessageBox.Show("Veuillez entrer une valeur numérique valide pour le seuil.");
-                    return;  // Ne ferme pas le dialogue
-                }
-                if (newThr < 0.1 || newThr > 10)
-                {
-                    MessageBox.Show("Le seuil doit être compris entre 0,1mm et 10mm.");
+                    ErrorMessage = "Veuillez entrer une valeur numérique valide pour le seuil.";
+                    ErrorVisibility = Visibility.Visible;
                     return;
+                }
+                else if (newThr < 0.1 || newThr > 10)
+                {
+                    ErrorMessage = "Le seuil doit être compris entre 0,1mm et 10mm.";
+                    ErrorVisibility = Visibility.Visible;
+                    return;
+                }
+                else
+                {
+                    ErrorVisibility = Visibility.Collapsed;
                 }
             }
 
@@ -85,8 +120,13 @@ namespace Seismoscope.ViewModel
             {
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    MessageBox.Show("Le nom ne peut être vide.");
+                    ErrorMessage = "Le nom ne peut être vide.";
+                    ErrorVisibility = Visibility.Visible;
                     return;
+                }
+                else
+                {
+                    ErrorVisibility = Visibility.Collapsed;
                 }
             }
 

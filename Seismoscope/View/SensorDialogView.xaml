@@ -4,17 +4,28 @@
         Title="Sensor Dialog" Height="225" Width="400">
     <StackPanel Margin="10">
         <StackPanel Visibility="{Binding ShowName, Converter={StaticResource BoolToVisibilityConverter}}">
-            <TextBlock Text="Nom:"/>
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="Nom:" Width="40" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </DockPanel>
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>
 
+        <!-- FREQUENCE -->
         <StackPanel Visibility="{Binding ShowFrequency, Converter={StaticResource BoolToVisibilityConverter}}">
-            <TextBlock Text="Fréquence:"/>
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="Fréquence:" Width="60" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </DockPanel>
             <TextBox Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>
 
+        <!-- SEUIL -->
         <StackPanel Visibility="{Binding ShowTreshold, Converter={StaticResource BoolToVisibilityConverter}}">
-            <TextBlock Text="Seuil:"/>
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="Seuil:" Width="40" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </DockPanel>
             <TextBox Text="{Binding Treshold, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>
 

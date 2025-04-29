@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Seismoscope.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250424210734_InitialCreate")]
+    [Migration("20250429152318_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
