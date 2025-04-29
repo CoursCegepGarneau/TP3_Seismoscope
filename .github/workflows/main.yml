@@ -1,0 +1,37 @@
+
+name: Intégration en continu de SeismoscopeWPF
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ] #Une fois la PR mergée, on revalide à nouveau pour s'assurer que le commit de merge n'aurait rien cassé
+
+jobs:
+  build-and-test:
+    name: Run .NET Tests
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore Seismoscope.sln
+
+    - name: Build solution
+      run: dotnet build Seismoscope.sln --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test SeismoscopeTest\SeismoscopeTest.csproj --verbosity normal --logger trx --results-directory TestResults
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: TestResults/
