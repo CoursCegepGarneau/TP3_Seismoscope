@@ -5,8 +5,8 @@
     <StackPanel Margin="10">
         <StackPanel Visibility="{Binding ShowName, Converter={StaticResource BoolToVisibilityConverter}}">
             <DockPanel LastChildFill="False">
-                <TextBlock Text="Nom:" Width="40" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBlock Text="Id du capteur:" Width="75" FontSize="11"/>
+                <TextBlock Text="{Binding ErrorMessageName}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </DockPanel>
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>
@@ -14,8 +14,8 @@
         <!-- FREQUENCE -->
         <StackPanel Visibility="{Binding ShowFrequency, Converter={StaticResource BoolToVisibilityConverter}}">
             <DockPanel LastChildFill="False">
-                <TextBlock Text="Fréquence:" Width="60" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBlock Text="Fréquence(1-100):" Width="99" FontSize="11"/>
+                <TextBlock Text="{Binding ErrorMessageFreq}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </DockPanel>
             <TextBox Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>
@@ -23,8 +23,8 @@
         <!-- SEUIL -->
         <StackPanel Visibility="{Binding ShowTreshold, Converter={StaticResource BoolToVisibilityConverter}}">
             <DockPanel LastChildFill="False">
-                <TextBlock Text="Seuil:" Width="40" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBlock Text="Seuil(0,1-10):" Width="72" FontSize="11"/>
+                <TextBlock Text="{Binding ErrorMessageTres}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </DockPanel>
             <TextBox Text="{Binding Treshold, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
         </StackPanel>

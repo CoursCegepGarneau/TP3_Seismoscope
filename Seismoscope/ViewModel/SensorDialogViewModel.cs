@@ -30,40 +30,45 @@ namespace Seismoscope.ViewModel
             set { _treshold = value; OnPropertyChanged(); }
         }
 
-        // Booléens pour contrôler l'affichage des champs
         public bool ShowName { get; set; }
         public bool ShowFrequency { get; set; }
         public bool ShowTreshold { get; set; }
+        public Action<bool> CloseAction { get; set; }
 
-        // Commandes
+
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
 
-        private string _errorMessage;
-        public string ErrorMessage
+        private string _errorMessageName;
+        public string ErrorMessageName
         {
-            get => _errorMessage;
+            get => _errorMessageName;
             set
             {
-                _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
+                _errorMessageName = value;
+                OnPropertyChanged(nameof(ErrorMessageName));
             }
         }
-
-        private Visibility _errorVisibility = Visibility.Collapsed;
-        public Visibility ErrorVisibility
+        private string _errorMessageFreq;
+        public string ErrorMessageFreq
         {
-            get => _errorVisibility;
+            get => _errorMessageFreq;
             set
             {
-                _errorVisibility = value;
-                OnPropertyChanged(nameof(ErrorVisibility));
+                _errorMessageFreq = value;
+                OnPropertyChanged(nameof(ErrorMessageFreq));
             }
         }
-
-        // Action appelée par la vue pour fermer la fenêtre
-        public Action<bool> CloseAction { get; set; }
-
+        private string _errorMessageTres;
+        public string ErrorMessageTres
+        {
+            get => _errorMessageTres;
+            set
+            {
+                _errorMessageTres = value;
+                OnPropertyChanged(nameof(ErrorMessageTres));
+            }
+        }
         public SensorDialogViewModel()
         {
             ConfirmCommand = new RelayCommand(OnConfirm);
@@ -72,65 +77,50 @@ namespace Seismoscope.ViewModel
 
         private void OnConfirm()
         {
-            // Validation pour la fréquence si elle doit être affichée
-            if (ShowFrequency)
-            {
-                if (!double.TryParse(Frequency, out double newFreq))
-                {
-                    ErrorMessage="Veuillez entrer une valeur numérique valide pour la fréquence.";
-                    ErrorVisibility = Visibility.Visible;
-                    return;
-                }
-                else if (newFreq < 1 || newFreq > 100)
-                {
-                    ErrorMessage="La fréquence doit être comprise entre 1 et 100.";
-                    ErrorVisibility = Visibility.Visible;
-                    return;
-                }
-                else
-                {
-                    ErrorVisibility = Visibility.Collapsed;
-                }
-                
-            }
-
-            // Validation pour le seuil si nécessaire
-            if (ShowTreshold)
-            {
-                if (!double.TryParse(Treshold, out double newThr))
-                {
-                    ErrorMessage = "Entrez une valeur numérique valide pour le seuil.";
-                    ErrorVisibility = Visibility.Visible;
-                    return;
-                }
-                else if (newThr < 0.1 || newThr > 10)
-                {
-                    ErrorMessage = "Le seuil doit être compris entre 0,1mm et 10mm.";
-                    ErrorVisibility = Visibility.Visible;
-                    return;
-                }
-                else
-                {
-                    ErrorVisibility = Visibility.Collapsed;
-                }
-            }
-
-            // Validation pour le nom si affiché
             if (ShowName)
             {
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    ErrorMessage = "Le nom ne peut être vide.";
-                    ErrorVisibility = Visibility.Visible;
+                    ErrorMessageName = "Le nom est requis";
                     return;
                 }
                 else
-                {
-                    ErrorVisibility = Visibility.Collapsed;
-                }
+                    ErrorMessageName = "";
+                
             }
 
-            // Toutes les validations sont passées : on ferme le dialogue en indiquant le succès.
+            if (ShowFrequency)
+            {
+                if (!double.TryParse(Frequency, out double newFreq))
+                {
+                    ErrorMessageFreq = "Une valeur numérique doit être entrée";
+                    return;
+                }
+                else if (newFreq < 1 || newFreq > 100)
+                {
+                    ErrorMessageFreq = "Valeur non valide";
+                    return;
+                }
+                else
+                    ErrorMessageFreq = "";
+            }
+
+            if (ShowTreshold)
+            {
+                if (!double.TryParse(Treshold, out double newThr))
+                {
+                    ErrorMessageTres = "La valeur doit être numérique";
+                    return;
+                }
+                else if (newThr < 0.1 || newThr > 10)
+                {
+                    ErrorMessageTres = "Valeur non valide";
+                    return;
+                }
+                else
+                    ErrorMessageTres = "";
+                
+            }
             CloseAction?.Invoke(true);
         }
 
