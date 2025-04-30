@@ -5,6 +5,8 @@ using Seismoscope.Model;
 using System;
 using Xunit;
 using Seismoscope.Model.Interfaces;
+using System.Globalization;
+using System.Threading;
 
 namespace SeismoscopeTest.ViewModel
 {
@@ -17,6 +19,8 @@ namespace SeismoscopeTest.ViewModel
 
         public HomeViewModelTests()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-CA");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("fr-CA");
             _mockUserService = new Mock<IUserService>();
             _mockNavigationService = new Mock<INavigationService>();
             _mockUserSessionService = new Mock<IUserSessionService>();
@@ -30,7 +34,8 @@ namespace SeismoscopeTest.ViewModel
         [Fact]
         public void StationInformations_ShouldReturnCorrectInformation()
         {
-            // Arrange
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-CA");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("fr-CA");
             var user = new Employe
             {
                 Station = new Station
