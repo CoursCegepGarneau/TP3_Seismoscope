@@ -7,6 +7,15 @@ on:
   push:
     branches: [ main, master ] #Une fois la PR mergée, on revalide à nouveau pour s'assurer que le commit de merge n'aurait rien cassé
 jobs:
+  check-direct-push:
+    name: Require a pull request before merging
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Push direct detected
+        run: |
+          echo "Push direct sur 'main' interdit. Passe par une pull request."
+          exit 1
   build-and-test:
     name: Run .NET Tests
     runs-on: windows-latest
