@@ -14,7 +14,7 @@
         <!-- FREQUENCE -->
         <StackPanel Visibility="{Binding ShowFrequency, Converter={StaticResource BoolToVisibilityConverter}}">
             <DockPanel LastChildFill="False">
-                <TextBlock Text="Fréquence(1-100):" Width="99" FontSize="11"/>
+                <TextBlock Text="Fréquence (1-100):" Width="99" FontSize="11"/>
                 <TextBlock Text="{Binding ErrorMessageFreq}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </DockPanel>
             <TextBox Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
@@ -23,7 +23,7 @@
         <!-- SEUIL -->
         <StackPanel Visibility="{Binding ShowTreshold, Converter={StaticResource BoolToVisibilityConverter}}">
             <DockPanel LastChildFill="False">
-                <TextBlock Text="Seuil(0,1-10):" Width="72" FontSize="11"/>
+                <TextBlock Text="Seuil (0,1-10):" Width="72" FontSize="11"/>
                 <TextBlock Text="{Binding ErrorMessageTres}" Foreground="Red" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </DockPanel>
             <TextBox Text="{Binding Treshold, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
