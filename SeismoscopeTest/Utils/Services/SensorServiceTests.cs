@@ -82,7 +82,7 @@ namespace SeismoscopeTest.Services
             _sensorRepositoryMock.Setup(repo => repo.GetById(1)).Returns(sensor);
 
             var result = _sensorService.GetSensorById(1);
-
+            Assert.NotNull(result);
             Assert.Equal(1, result.Id);
         }
 

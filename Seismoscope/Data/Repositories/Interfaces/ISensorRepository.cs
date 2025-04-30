@@ -10,7 +10,7 @@ namespace Seismoscope.Data.Repositories.Interfaces
     public interface ISensorRepository
     {
         IList<Sensor> GetAll();
-        Sensor GetById(int id);
+        Sensor? GetById(int id);
         IList<Sensor> GetByStationId(int stationId);
         void ChangeFrequency(Sensor sensor);
         void ChangeTreshold(Sensor sensor);

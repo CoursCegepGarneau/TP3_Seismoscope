@@ -23,8 +23,8 @@ namespace Seismoscope.ViewModel
         private ISensorService _sensorService;
         private readonly IStationService _stationService;
 
-        private string _username;
-        public string Username
+        private string? _username;
+        public string? Username
         {
             get => _username;
             set
@@ -33,13 +33,13 @@ namespace Seismoscope.ViewModel
                 {
                     _username = value;
                     OnPropertyChanged(nameof(Username));
-                    ValidateProperty(nameof(Username), value);
+                    ValidateProperty(nameof(Username), value!);
                 }
             }
         }
 
-        private string _password;
-        public string Password
+        private string? _password;
+        public string? Password
         {
             get => _password;
             set
@@ -48,7 +48,7 @@ namespace Seismoscope.ViewModel
                 {
                     _password = value;
                     OnPropertyChanged(nameof(Password));
-                    ValidateProperty(nameof(Password), value);
+                    ValidateProperty(nameof(Password), value!);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace Seismoscope.ViewModel
         // Méthode pour gérer la connexion de l'utilisateur
         private void Connect()
         {
-            User? user = _userService.AuthenticateUser(Username, Password);
+            User? user = _userService.AuthenticateUser(Username!, Password!);
             if (user != null)
             {
                 _userSessionService.ConnectedUser = user;

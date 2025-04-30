@@ -86,11 +86,9 @@ namespace SeismoscopeTest.Data.Repositories
             // Act
             station.Nom = "Montreal";
             _repository.Update(station);
-
             var updated = _repository.GetById(station.Id);
-
-            // Assert
-            Assert.Equal("Montreal", updated.Nom);
+            Assert.NotNull(updated);
+            Assert.Equal("Montreal", updated!.Nom);
         }
 
         [Fact]

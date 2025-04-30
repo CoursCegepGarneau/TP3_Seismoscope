@@ -8,7 +8,7 @@ namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface INavigationService
     {
-        BaseViewModel CurrentView { get; }
+        BaseViewModel? CurrentView { get; }
         void NavigateTo<T>() where T : BaseViewModel;
 
         void NavigateTo(BaseViewModel viewModel);

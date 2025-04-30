@@ -25,7 +25,7 @@ namespace Seismoscope.ViewModel
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
         private readonly IUserSessionService _userSessionService;
-        private ObservableCollection<Sensor> _sensors;
+        private ObservableCollection<Sensor> _sensors = null!;
 
         public ObservableCollection<Sensor> Sensors
         {
@@ -37,8 +37,8 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        private Station _selectedStation;
-        public Station SelectedStation
+        private Station? _selectedStation;
+        public Station? SelectedStation
         {
             get => _selectedStation;
             set
@@ -48,9 +48,9 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        private Sensor _selectedSensor;
+        private Sensor? _selectedSensor;
 
-        public Sensor SelectedSensor
+        public Sensor? SelectedSensor
         {
             get => _selectedSensor;
             set
@@ -73,9 +73,9 @@ namespace Seismoscope.ViewModel
         }
 
         public ICommand NavigateToHomeViewCommand { get; set; }
-        public ICommand NavigateToSensorManagementViewCommand { get; }
-        public ICommand NavigateToSensorManagementForAssignmentCommand { get; }
-        public ICommand AddSensorToStationCommand { get; }
+        public ICommand? NavigateToSensorManagementViewCommand { get; }
+        public ICommand? NavigateToSensorManagementForAssignmentCommand { get; }
+        public ICommand? AddSensorToStationCommand { get; }
         public ICommand UpdateSensorStatusCommand { get; set; }
         public ICommand ChangeFrequencyCommand { get; set; }
         public ICommand ChangeTresholdCommand { get; set; }
@@ -183,6 +183,8 @@ namespace Seismoscope.ViewModel
 
         private void Delete()
         {
+            if (SelectedSensor is null)
+                return;
             _sensorService.DeleteSensor(SelectedSensor);
             Sensors.Remove(SelectedSensor);
             SelectedSensor = null;

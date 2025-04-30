@@ -75,7 +75,7 @@ namespace SeismoscopeTest.ViewModel
         public void ConnectCommand_ShouldAddError_WhenUserNotFound()
         {
             // Arrange
-            _mockUserService.Setup(u => u.AuthenticateUser("resu", "drowssap")).Returns((User)null);
+            _mockUserService.Setup(u => u.AuthenticateUser("resu", "drowssap")).Returns((User?)null);
 
             // Act
             _viewModel.Username = "resu";

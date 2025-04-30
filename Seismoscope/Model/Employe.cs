@@ -12,6 +12,6 @@ namespace Seismoscope.Model
         public override UserRole Role => UserRole.Employe;
 
         public int StationId { get; set; }
-        public Station Station { get; set; }
+        public Station? Station { get; set; }
     }
 }

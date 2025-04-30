@@ -11,17 +11,15 @@ public class ApplicationDbContext : DbContext
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    protected override void OnConfiguring(
-       DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // Définir le chemin absolu pour la base de données dans le répertoire AppData
             var dbPath = Path.Combine(@"C:\Seismoscope\", "Seismoscope.db");
-            Directory.CreateDirectory(Path.GetDirectoryName(dbPath));
+            var directory = Path.GetDirectoryName(dbPath)
+                          ?? throw new InvalidOperationException("Chemin du répertoire invalide.");
+            Directory.CreateDirectory(directory);
             var connectionString = $"Data Source={dbPath}";
-
-            // Configurer le DbContext pour utiliser la chaîne de connexion
             optionsBuilder.UseSqlite(connectionString);
         }
     }

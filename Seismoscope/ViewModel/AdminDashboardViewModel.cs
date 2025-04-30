@@ -16,10 +16,10 @@ namespace Seismoscope.ViewModel
         private readonly IStationService _stationService;
         private readonly IUserSessionService _userSession;
         private readonly ISensorService _sensorService;
-        private Station _selectedStation;
-        private ObservableCollection<Sensor> _selectedStationSensors;
+        private Station? _selectedStation;
+        private ObservableCollection<Sensor> _selectedStationSensors =null!;
 
-        public Station SelectedStation
+        public Station? SelectedStation
         {
             get => _selectedStation;
             set

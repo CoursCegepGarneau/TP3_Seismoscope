@@ -28,7 +28,7 @@ namespace Seismoscope.ViewModel
         public ICommand NavigateToConnectUserViewCommand { get; set; }
         public ICommand NavigateToHomeViewCommand { get; set; }
 
-        public ICommand DisconnectCommand { get; }
+        public ICommand? DisconnectCommand { get; }
 
         private bool _isWelcomeVisible = true;
         public bool IsWelcomeVisible

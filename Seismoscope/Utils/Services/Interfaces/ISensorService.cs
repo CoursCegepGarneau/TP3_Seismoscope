@@ -3,7 +3,7 @@
     public interface ISensorService
     {
         IList<Sensor> GetAllSensors();
-        Sensor GetSensorById(int id);
+        Sensor? GetSensorById(int id);
         IList<Sensor> GetSensorByStationId(int stationId);
         void ActivateSensor(Sensor sensor);
         void DeactivateSensor(Sensor sensor);

@@ -19,7 +19,7 @@ namespace Seismoscope.Model.Services
             return _sensorRepository.GetAll();
         }
 
-        public Sensor GetSensorById(int id)
+        public Sensor? GetSensorById(int id)
         {
             return _sensorRepository.GetById(id);
         }

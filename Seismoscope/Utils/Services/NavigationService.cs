@@ -10,10 +10,10 @@ namespace Seismoscope.Utils.Services
 {
     public class NavigationService : BaseViewModel, INavigationService
     {
-        private BaseViewModel _currentView;
+        private BaseViewModel? _currentView;
         private Func<Type, BaseViewModel> _viewModelFactory;
 
-        public BaseViewModel CurrentView
+        public BaseViewModel? CurrentView
         {
             get => _currentView;
             set

@@ -10,7 +10,7 @@ namespace Seismoscope.Model
     public class Sensor
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public double Frequency { get; set; }
         public double Treshold { get; set; }
         public bool Delivered { get; set; } 

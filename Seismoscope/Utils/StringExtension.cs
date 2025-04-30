@@ -13,7 +13,7 @@ namespace Seismoscope.Utils
             return string.IsNullOrWhiteSpace(value);
         }
 
-        public static bool NotEmpty(this string value)
+        public static bool NotEmpty(this string? value)
         {
             return !string.IsNullOrWhiteSpace(value);
         }

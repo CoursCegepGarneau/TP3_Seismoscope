@@ -25,7 +25,7 @@ namespace Seismoscope.Model
                 .ToList();
         }
 
-        public Sensor GetById(int id)
+        public Sensor? GetById(int id)
         {
             return _dbContext.Sensors.FirstOrDefault(s => s.Id == id);
         }
@@ -41,7 +41,7 @@ namespace Seismoscope.Model
 
         public void ChangeFrequency(Sensor sensor)
         {
-            Sensor existingSensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == sensor.Id);
+            Sensor? existingSensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == sensor.Id);
             if (existingSensor != null)
             {
                 existingSensor.Frequency = sensor.Frequency;
@@ -52,7 +52,7 @@ namespace Seismoscope.Model
 
         public void ChangeTreshold(Sensor sensor)
         {
-            Sensor existingSensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == sensor.Id);
+            Sensor? existingSensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == sensor.Id);
             if (existingSensor != null)
             {
                 existingSensor.Treshold = sensor.Treshold;

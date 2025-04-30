@@ -8,8 +8,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<LangVersion>preview</LangVersion>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-		<!-- AJOUT TEMPORAIRE POUR IGNORER LES WARNINGS-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,24 +24,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GMap.NET.Presentation" Version="1.7.5" />
+		<PackageReference Include="GMap.NET.Presentation" Version="1.7.5">
+			<NoWarn>NU1701</NoWarn>
+		</PackageReference>
 		<PackageReference Include="GMap.NET.WinPresentation" Version="2.1.7" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.119" />
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.3" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -6,8 +6,8 @@ namespace Seismoscope.Utils.Services
 {
     public class UserSessionService : IUserSessionService
     {
-        private User _connectedUser;
-        public User ConnectedUser
+        private User? _connectedUser;
+        public User? ConnectedUser
         {
             get => _connectedUser;
             set

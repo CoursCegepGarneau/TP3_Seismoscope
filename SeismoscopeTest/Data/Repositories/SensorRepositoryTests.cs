@@ -93,6 +93,7 @@ namespace SeismoscopeTest.Data.Repositories
             _repository.ChangeFrequency(sensor);
 
             var updatedSensor = _context.Sensors.Find(1);
+            Assert.NotNull(updatedSensor);
             Assert.Equal(42, updatedSensor.Frequency);
         }
 
@@ -142,6 +143,7 @@ namespace SeismoscopeTest.Data.Repositories
             _context.SaveChanges();
 
             var result = _context.Sensors.Find(1);
+            Assert.NotNull(result);
 
             Assert.Equal(sensor.Name, result.Name);
             Assert.Equal(sensor.Treshold, result.Treshold);
@@ -167,6 +169,7 @@ namespace SeismoscopeTest.Data.Repositories
             _repository.UpdateDeliveryStatus(sensor);
 
             var updated = _context.Sensors.Find(1);
+            Assert.NotNull(updated);
             Assert.True(updated.Delivered);
         }
 

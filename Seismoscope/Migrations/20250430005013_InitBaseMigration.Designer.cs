@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Seismoscope.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250429152318_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250430005013_InitBaseMigration")]
+    partial class InitBaseMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
 
             modelBuilder.Entity("Seismoscope.Model.Sensor", b =>
                 {
@@ -31,7 +31,6 @@ namespace Seismoscope.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Operational")
@@ -69,11 +68,9 @@ namespace Seismoscope.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Nom")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Région")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -93,22 +90,18 @@ namespace Seismoscope.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nom")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Prenom")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("StationId1")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

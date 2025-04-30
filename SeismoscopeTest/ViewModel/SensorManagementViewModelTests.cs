@@ -98,6 +98,7 @@ namespace SeismoscopeTest.ViewModel
         {
 
             var sensorToDelete = _viewModel.AllSensors.FirstOrDefault();
+            Assert.NotNull(sensorToDelete);
             _viewModel.SelectedSensor = sensorToDelete;
             _viewModel.DeleteSensorCommand.Execute(null);
             _mockSensorService.Verify(s => s.DeleteSensor(sensorToDelete), Times.Once);
@@ -109,6 +110,7 @@ namespace SeismoscopeTest.ViewModel
         public void DeleteSensorCommand_ShouldNotDeleteSensor_WhenCanNotDelete()
         {
             var sensorToDelete = _viewModel.AllSensors.FirstOrDefault();
+            Assert.NotNull(sensorToDelete);
             sensorToDelete.SensorStatus = true;
             _viewModel.SelectedSensor = sensorToDelete;
 

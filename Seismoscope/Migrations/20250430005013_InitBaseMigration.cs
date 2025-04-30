@@ -5,7 +5,7 @@
 namespace Seismoscope.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitBaseMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,8 +16,8 @@ namespace Seismoscope.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nom = table.Column<string>(type: "TEXT", nullable: false),
-                    Région = table.Column<string>(type: "TEXT", nullable: false),
+                    Nom = table.Column<string>(type: "TEXT", nullable: true),
+                    Région = table.Column<string>(type: "TEXT", nullable: true),
                     Latitude = table.Column<double>(type: "REAL", nullable: false),
                     Longitude = table.Column<double>(type: "REAL", nullable: false)
                 },
@@ -32,7 +32,7 @@ namespace Seismoscope.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
                     Frequency = table.Column<double>(type: "REAL", nullable: false),
                     Treshold = table.Column<double>(type: "REAL", nullable: false),
                     Delivered = table.Column<bool>(type: "INTEGER", nullable: false),
@@ -57,10 +57,10 @@ namespace Seismoscope.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Prenom = table.Column<string>(type: "TEXT", nullable: false),
-                    Nom = table.Column<string>(type: "TEXT", nullable: false),
-                    Username = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    Prenom = table.Column<string>(type: "TEXT", nullable: true),
+                    Nom = table.Column<string>(type: "TEXT", nullable: true),
+                    Username = table.Column<string>(type: "TEXT", nullable: true),
+                    Password = table.Column<string>(type: "TEXT", nullable: true),
                     Discriminator = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false),
                     StationId1 = table.Column<int>(type: "INTEGER", nullable: true),
                     StationId = table.Column<int>(type: "INTEGER", nullable: true)

@@ -9,7 +9,6 @@ using Seismoscope.Services.Interfaces;
 using Seismoscope.Utils.Enums;
 using System.Reflection.Metadata;
 using static Seismoscope.ViewModel.SensorViewModel;
-using Seismoscope.Utils.Enums;
 using System.Windows;
 
 namespace Seismoscope.ViewModel
@@ -21,11 +20,11 @@ namespace Seismoscope.ViewModel
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
 
-        private Sensor _selectedSensor;
+        private Sensor? _selectedSensor;
 
         public ObservableCollection<Sensor> AllSensors { get; set; }
 
-        public Sensor SelectedSensor
+        public Sensor? SelectedSensor
         {
             get => _selectedSensor;
             set
