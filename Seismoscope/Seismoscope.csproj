@@ -8,6 +8,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<LangVersion>preview</LangVersion>
+		<WarningsAsErrors>false</WarningsAsErrors>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>CS8612;CS8618;CS8625</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
