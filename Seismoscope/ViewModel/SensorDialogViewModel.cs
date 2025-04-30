@@ -99,7 +99,7 @@ namespace Seismoscope.ViewModel
             {
                 if (!double.TryParse(Treshold, out double newThr))
                 {
-                    ErrorMessage = "Veuillez entrer une valeur numérique valide pour le seuil.";
+                    ErrorMessage = "Entrez une valeur numérique valide pour le seuil.";
                     ErrorVisibility = Visibility.Visible;
                     return;
                 }
