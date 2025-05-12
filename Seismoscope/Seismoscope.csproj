@@ -14,6 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Nlog.config" />
 		<None Remove="Resources\delete.png" />
 		<None Remove="Resources\edit.png" />
 		<None Remove="Resources\key-icon.png" />
@@ -24,6 +25,12 @@
 
 	<ItemGroup>
 		<Page Remove="Resources\Styles.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Nlog.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,6 +45,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.119" />
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
