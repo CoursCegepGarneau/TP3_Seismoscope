@@ -51,7 +51,6 @@ namespace Seismoscope
             services.AddSingleton<ISensorRepository, SensorRepository>();
             services.AddSingleton<IStationRepository, StationRepository>();
             services.AddSingleton<IStationService, StationService>();
-            services.AddDbContext<ApplicationDbContext>();
 
 
             services.AddSingleton<Func<Type, BaseViewModel>>(serviceProvider =>
@@ -70,6 +69,7 @@ namespace Seismoscope
                 var connectionString = $"Data Source={dbPath}";
                 options.UseSqlite(connectionString);
             });
+
 
 
             _serviceProvider = services.BuildServiceProvider();
