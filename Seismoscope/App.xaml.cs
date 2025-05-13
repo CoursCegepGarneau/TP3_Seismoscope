@@ -39,7 +39,7 @@ namespace Seismoscope
             services.AddSingleton<HomeViewModel>();
             services.AddSingleton<ConnectUserViewModel>();
             services.AddSingleton<SensorViewModel>();
-
+            services.AddSingleton<IConfigurationService, ConfigurationService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<SensorManagementViewModel>();
@@ -51,6 +51,7 @@ namespace Seismoscope
             services.AddSingleton<ISensorRepository, SensorRepository>();
             services.AddSingleton<IStationRepository, StationRepository>();
             services.AddSingleton<IStationService, StationService>();
+            services.AddDbContext<ApplicationDbContext>();
 
 
             services.AddSingleton<Func<Type, BaseViewModel>>(serviceProvider =>
@@ -62,10 +63,18 @@ namespace Seismoscope
                 return ViewModelFactory;
             });
 
-            services.AddDbContext<ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>((provider, options) =>
+            {
+                var config = provider.GetRequiredService<IConfigurationService>();
+                var dbPath = config.GetDbPath() ?? throw new InvalidOperationException("DbPath manquant.");
+                var connectionString = $"Data Source={dbPath}";
+                options.UseSqlite(connectionString);
+            });
+
 
             _serviceProvider = services.BuildServiceProvider();
         }
+
 
         //EnsureCreated() ne tient pas compte les migrations, donc on le remplace direct par Database.Migrate()
         protected override void OnStartup(StartupEventArgs e)

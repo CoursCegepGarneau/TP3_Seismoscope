@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Seismoscope.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250430005013_InitBaseMigration")]
-    partial class InitBaseMigration
+    [Migration("20250513031809_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,7 @@ namespace Seismoscope.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Nom")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Région")

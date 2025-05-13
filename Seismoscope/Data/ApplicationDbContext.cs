@@ -5,29 +5,31 @@ using Seismoscope.Utils.Enums;
 using System.IO;
 using Seismoscope.Utils.Services.Interfaces;
 using System.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 public class ApplicationDbContext : DbContext
 {
 
-    private readonly IConfigurationService? _configurationService;
-
-    public ApplicationDbContext() : base() { }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfigurationService configurationService) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+         : base(options)
     {
-        _configurationService = configurationService;
+    }
+
+    public ApplicationDbContext()
+    {
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var dbPath = Path.Combine(@"C:\Seismoscope\", "Seismoscope.db");
-            var directory = Path.GetDirectoryName(dbPath)
-                          ?? throw new InvalidOperationException("Chemin du répertoire invalide.");
+            var dbPath = ConfigurationManager.AppSettings["DbPath"];
+
+            if (string.IsNullOrWhiteSpace(dbPath))
+                throw new InvalidOperationException("DbPath manquant dans App.config");
+            var directory = Path.GetDirectoryName(dbPath)!;
             Directory.CreateDirectory(directory);
-            var connectionString = $"Data Source={dbPath}";
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
     }
 
@@ -41,7 +43,6 @@ public class ApplicationDbContext : DbContext
     {
         try
         {
-            var config = new ConfigurationService();
 
             AddDefaultStations();
             AddDefaultUsers();
