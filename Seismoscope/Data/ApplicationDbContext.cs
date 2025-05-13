@@ -65,6 +65,9 @@ public class ApplicationDbContext : DbContext
         // Étape 2 : Ajout des utilisateurs si aucun
         if (!Users.Any())
         {
+           // var hashedPassword1 = Bcrypt.Net.BCrypt.HashPassword(_configurationService.GetDefaultadminPassword());
+            //var user1 = new User { Email = _configurationService.GetDefaultAdminUserName(), Password = hashedPassword1 };
+
             Users.AddRange(
                 new Admin
                 {

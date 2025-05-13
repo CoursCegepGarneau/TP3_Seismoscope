@@ -1,5 +1,6 @@
 ﻿using System;
 using Seismoscope.Model.Interfaces;
+using BCrypt.Net;
 using Seismoscope.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,13 @@ namespace Seismoscope.Model.DAL
         public User? FindByUsernameAndPassword(string username, string password)
         {
             var user = _context.Users
-                .FirstOrDefault(u => u.Username == username && u.Password == password);
+                .FirstOrDefault(u => u.Username == username);
+            if(user == null)
+                return null;
+
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            if(!isPasswordValid)
+                return null;
 
             // Si c'est un Employe, on charge explicitement la Station
             if (user is Employe employe)

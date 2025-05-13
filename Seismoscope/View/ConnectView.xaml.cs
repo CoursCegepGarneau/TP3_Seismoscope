@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Seismoscope.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace Seismoscope.View
         {
             InitializeComponent();
 
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is ConnectUserViewModel vm)
+            {
+                vm.Password = PasswordBox.Password;
+            }
         }
     }
 }

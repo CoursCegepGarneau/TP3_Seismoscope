@@ -40,7 +40,7 @@
                     </TextBox>
 
                     <Label Content="Mot de passe" Foreground="DarkGray" FontFamily="Montserrat" Margin="0,10,0,5"/>
-                    <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Width="250" Margin="10" Height="28"
+                    <PasswordBox x:Name="PasswordBox" PasswordChanged ="PasswordBox_PasswordChanged" Width="250" Margin="10" Height="28"
                     FontSize="13" 
                     FontFamily="Montserrat"
                     BorderThickness="0,0,0,2"
