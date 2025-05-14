@@ -7,9 +7,8 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-  	<Compile 
-		Update="View\AdminDashboardView.xaml.cs">
-	</Compile>
+    <Compile Update="View\AdminDashboardView.xaml.cs">
+    </Compile>
     <Compile Update="View\SensorDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -37,6 +36,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="View\ConnectView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\SensorReadingView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

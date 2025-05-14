@@ -93,6 +93,9 @@ namespace Seismoscope.ViewModel
         public ICommand AddSensorCommand { get; set; }
         public ICommand DeleteSensorCommand { get; set; }
 
+
+        public ICommand AnalyzeSensorCommand { get; }
+
         public SensorViewModel(ISensorService sensorService, INavigationService navigationService,IDialogService dialogService, IUserSessionService userSessionService)
         {
             _sensorService = sensorService;
@@ -113,6 +116,13 @@ namespace Seismoscope.ViewModel
             AddSensorCommand = new RelayCommand(NavigateToSensorManagementForAssignment);
             DeleteSensorCommand = new RelayCommand(Delete, CanDelete);
             RefreshSensors();
+
+
+            AnalyzeSensorCommand = new RelayCommand<Sensor>(sensor =>
+            {
+                if (sensor != null)
+                    _navigationService.NavigateTo<SensorReadingViewModel>(sensor);
+            });
         }
 
 

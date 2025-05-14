@@ -4,13 +4,26 @@
              xmlns:local="clr-namespace:Seismoscope"
              xmlns:viewModel="clr-namespace:Seismoscope.ViewModel"
              xmlns:view="clr-namespace:Seismoscope.View"
-             xmlns:converters="clr-namespace:Seismoscope.Utils.Converters">
+             xmlns:converters="clr-namespace:Seismoscope.Utils.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles.xaml"/>
+
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Blue" SecondaryColor="Lime" />
+
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
+
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#005ce6" />
+            <!-- Violet -->
+            <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#1054b3" />
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#7ba4e3" />
+            <SolidColorBrush x:Key="PrimaryBlue" Color="#005ce6" />
+
+
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
                 <view:HomeView/>
             </DataTemplate>
@@ -25,6 +38,10 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:SensorManagementViewModel}">
                 <view:SensorManagementView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:SensorReadingViewModel}">
+                <view:SensorReadingView />
             </DataTemplate>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
