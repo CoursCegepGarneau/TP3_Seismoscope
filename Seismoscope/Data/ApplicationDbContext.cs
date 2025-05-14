@@ -6,10 +6,12 @@ using System.IO;
 using Seismoscope.Utils.Services.Interfaces;
 using System.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
+using Seismoscope.Utils;
 
 public class ApplicationDbContext : DbContext
 {
-
+    readonly static ILogger logger = LogManager.GetCurrentClassLogger();
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
          : base(options)
     {
@@ -23,10 +25,13 @@ public class ApplicationDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var dbPath = ConfigurationManager.AppSettings["DbPath"];
 
+            var dbPath = ConfigurationManager.AppSettings["DbPath"];
             if (string.IsNullOrWhiteSpace(dbPath))
+            {
+                logger.Fatal("DbPath manquant dans App.config");
                 throw new InvalidOperationException("DbPath manquant dans App.config");
+            }
             var directory = Path.GetDirectoryName(dbPath)!;
             Directory.CreateDirectory(directory);
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
@@ -43,14 +48,16 @@ public class ApplicationDbContext : DbContext
     {
         try
         {
-
+            logger.Info("Ajout des stations par défaut...");
             AddDefaultStations();
+            logger.Info("Ajout des utilisateurs par défaut...");
             AddDefaultUsers();
+            logger.Info("Ajout des capteurs par défaut...");
             AddDefaultSensors();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur lors de l'ajout des données : {ex.Message}");
+            logger.Warn(ex, $"Erreur lors de l'ajout des données");
         }
     }
     private void AddDefaultStations()
@@ -103,51 +110,72 @@ public class ApplicationDbContext : DbContext
 
     private void AddDefaultUsers()
     {
-        int count = int.Parse(ConfigurationManager.AppSettings["DefaultUsers.Count"]??"0");
+        int count = int.Parse(ConfigurationManager.AppSettings["DefaultUsers.Count"] ?? "0");
+        logger.Debug($"Nombre d'utilisateurs par défaut à traiter:{count}");
         for (int i = 1; i <= count; i++)
         {
             var DefaultUser = ConfigurationManager.AppSettings[$"DefaultUser.{i}"];
-            if(string.IsNullOrEmpty(DefaultUser))
-                throw new ConfigurationErrorsException($"Clé 'DefaultUser.{i}' manquant");
-            var parts = DefaultUser.Split('|');
-
-            string prenom = parts[0];
-            string nom = parts[1];
-            string username = parts[2];
-            string password = parts[3];
-            string role = parts[4];
-            string? stationSuffix = parts.Length > 5 ? parts[5] : null;
-
-            if (Users.Any(u => u.Username == username))
-                continue;
-
-            if (role == "Admin")
+            try
             {
-                Admins.Add(new Admin
+                if (DefaultUser.Empty())
                 {
-                    Prenom = prenom,
-                    Nom = nom,
-                    Username = username,
-                    Password = BCrypt.Net.BCrypt.HashPassword(password)
-                });
-            }
-            else if (role == "Employe")
-            {
-                Station? station = null;
-
-                if (!string.IsNullOrEmpty(stationSuffix))
-                {
-                    station = Stations.FirstOrDefault(s => s.Nom.EndsWith(stationSuffix));
+                    logger.Error($"Clé 'DefaultUser.{i}' introuvable dans App.config");
+                    throw new ConfigurationErrorsException($"Clé 'DefaultUser.{i}' manquant");
                 }
 
-                Employes.Add(new Employe
+
+                var parts = DefaultUser!.Split('|');
+                if (parts.Length < 5)
                 {
-                    Prenom = prenom,
-                    Nom = nom,
-                    Username = username,
-                    Password = BCrypt.Net.BCrypt.HashPassword(password),
-                    Station = station
-                });
+                    logger.Warn($"Format Invalide pour un defaultUser, attributs:{parts.Length}");
+                    throw new ConfigurationErrorsException($"Le Format est invalide pour 'DefaultUser.{i}'");
+                }
+
+                string prenom = parts[0];
+                string nom = parts[1];
+                string username = parts[2];
+                string password = parts[3];
+                string role = parts[4];
+                string? stationSuffix = parts.Length > 5 ? parts[5] : null;
+
+                if (Users.Any(u => u.Username == username))
+                {
+                    logger.Info($"L'utilisateur avec le nom d'utilisateur '{username}' existe déjà.");
+                    continue;
+                }
+                   
+                if (role == "Admin")
+                {
+                    Admins.Add(new Admin
+                    {
+                        Prenom = prenom,
+                        Nom = nom,
+                        Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password)
+                    });
+                }
+                else if (role == "Employe")
+                {
+                    Station? station = null;
+
+                    if (stationSuffix.NotEmpty())
+                    {
+                        station = Stations.FirstOrDefault(s => s.Nom.EndsWith(stationSuffix!));
+                    }
+
+                    Employes.Add(new Employe
+                    {
+                        Prenom = prenom,
+                        Nom = nom,
+                        Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password),
+                        Station = station
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Erreur lors de l'ajout des utilisateurs par défaut '{DefaultUser}'");
             }
         }
         SaveChanges();

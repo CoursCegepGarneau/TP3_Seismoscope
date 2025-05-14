@@ -3,6 +3,7 @@ using Seismoscope.Utils.Services.Interfaces;
 using System.Collections.ObjectModel;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils;
+using NLog;
 using Seismoscope.Utils.Commands;
 using Seismoscope.Utils.Services;
 using System.Windows.Input;
@@ -13,6 +14,7 @@ namespace Seismoscope.ViewModel
 {
     public class AdminDashboardViewModel : BaseViewModel
     {
+        readonly static ILogger logger = LogManager.GetCurrentClassLogger();
         private readonly IStationService _stationService;
         private readonly IUserSessionService _userSession;
         private readonly ISensorService _sensorService;
@@ -70,7 +72,9 @@ namespace Seismoscope.ViewModel
 
             if (station != null)
             {
-                SelectedStationSensors = new ObservableCollection<Sensor>(_sensorService.GetSensorByStationId(station.Id));
+                var sensors = _sensorService.GetSensorByStationId(station.Id);
+                logger.Info($"Station sélectionnée : {station.Nom} ({sensors.Count()} capteurs).");
+                SelectedStationSensors = new ObservableCollection<Sensor>(sensors);
             }
             else
             {
