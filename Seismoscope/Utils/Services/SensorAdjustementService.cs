@@ -5,17 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Seismoscope.Utils.Services.SensorAdjustementService;
-using Seismoscope.Utils;
 
 namespace Seismoscope.Utils.Services
 {
     public class SensorAdjustementService : ISensorAdjustementService
     {
+        private readonly ISeismicEventStoreService _seismicEventStore;
+
+        public SensorAdjustementService(ISeismicEventStoreService eventStore)
+        {
+            _seismicEventStore = eventStore;
+        }
+
         public void EvaluateAndApply(SeismicEvent seismicEvent, Sensor sensor)
         {
-            SeismicEventStore.AddEvent(seismicEvent);
-            IReadOnlyCollection<SeismicEvent> lastEvents = SeismicEventStore.LastSeismicEvents;
+            _seismicEventStore.AddEvent(seismicEvent);
+            IReadOnlyCollection<SeismicEvent> lastEvents = _seismicEventStore.GetLastSeismicEvents();
 
             AdjustSensorHigherThreshold(seismicEvent, sensor);
             AdjustSensorLowerThreshold(sensor, lastEvents);
