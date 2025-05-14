@@ -23,7 +23,6 @@ namespace Seismoscope
         private readonly ServiceProvider _serviceProvider;
         public App()
         {
-            // Note à moi-même, mieux séparer en fonctions ici. 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory());
             IConfiguration configuration = builder.Build();
@@ -45,7 +44,6 @@ namespace Seismoscope
             services.AddSingleton<SensorManagementViewModel>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<IUserSessionService, UserSessionService>();
-            services.AddSingleton<MainViewModel>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<ISensorService,SensorService>();
             services.AddSingleton<ISensorRepository, SensorRepository>();
@@ -75,8 +73,6 @@ namespace Seismoscope
             _serviceProvider = services.BuildServiceProvider();
         }
 
-
-        //EnsureCreated() ne tient pas compte les migrations, donc on le remplace direct par Database.Migrate()
         protected override void OnStartup(StartupEventArgs e)
         {
             using (var scope = _serviceProvider.CreateScope())

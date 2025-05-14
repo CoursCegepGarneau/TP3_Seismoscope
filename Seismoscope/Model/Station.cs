@@ -14,7 +14,6 @@ namespace Seismoscope.Model
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        // liste des employés liés à cette station (optionnel)
         public ICollection<User>? Employes { get; set; }
     }
 
