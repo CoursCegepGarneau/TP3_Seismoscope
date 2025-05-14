@@ -30,6 +30,13 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Créer App.config depuis secret
+      run: |
+       cat <<EOF> Seismoscope/App.config 
+       ${{ secrets.APP_CONFIG_PROD }}
+       EOF
+      shell: bash
+    
     - name: Publish WPF app
       run: >
         dotnet publish Seismoscope/Seismoscope.csproj
