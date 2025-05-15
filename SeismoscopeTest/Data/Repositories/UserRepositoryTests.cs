@@ -91,7 +91,5 @@ namespace SeismoscopeTest.Data.Repositories
 
             Assert.Null(result);
         }
-
-
     }
 }
