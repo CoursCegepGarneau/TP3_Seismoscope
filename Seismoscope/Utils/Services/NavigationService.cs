@@ -38,12 +38,5 @@ namespace Seismoscope.Utils.Services
         {
             CurrentView = viewModel;
         }
-
-        public void NavigateTo<TViewModel>(object parameter)
-        {
-            var viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
-            viewModel.OnNavigated(parameter);
-            CurrentView = viewModel;
-        }
     }
 }

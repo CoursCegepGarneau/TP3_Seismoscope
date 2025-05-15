@@ -11,10 +11,5 @@ namespace Seismoscope.Utils
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public virtual void OnNavigated(object? parameter = null)
-        {
-            // Méthode par défaut vide — peut être surchargée dans les ViewModels
-        }
     }
 }

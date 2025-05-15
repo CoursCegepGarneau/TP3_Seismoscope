@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Seismoscope.Services.Interfaces;
+﻿using Seismoscope.Services.Interfaces;
 using Seismoscope.View;
 
 namespace Seismoscope.Services
@@ -14,13 +13,5 @@ namespace Seismoscope.Services
             };
             return dialog.ShowDialog();
         }
-
-        public string? OpenFile(string filter)
-        {
-            var dlg = new OpenFileDialog { Filter = filter };
-            return dlg.ShowDialog() == true ? dlg.FileName : null;
-        }
     }
-
 }
-

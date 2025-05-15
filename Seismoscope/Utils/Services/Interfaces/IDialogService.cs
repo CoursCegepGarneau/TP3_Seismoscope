@@ -9,7 +9,6 @@ namespace Seismoscope.Services.Interfaces
     public interface IDialogService
     {
         bool? ShowDialog(object viewModel);
-        string? OpenFile(string filter);
     }
 }
 
