@@ -5,7 +5,7 @@
 namespace Seismoscope.Migrations
 {
     /// <inheritdoc />
-    public partial class InitBaseMigration : Migration
+    public partial class InitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Seismoscope.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nom = table.Column<string>(type: "TEXT", nullable: true),
+                    Nom = table.Column<string>(type: "TEXT", nullable: false),
                     Région = table.Column<string>(type: "TEXT", nullable: true),
                     Latitude = table.Column<double>(type: "REAL", nullable: false),
                     Longitude = table.Column<double>(type: "REAL", nullable: false)

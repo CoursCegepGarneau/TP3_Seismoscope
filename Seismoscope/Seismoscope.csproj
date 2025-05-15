@@ -14,6 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Nlog.config" />
 		<None Remove="Resources\delete.png" />
 		<None Remove="Resources\edit.png" />
 		<None Remove="Resources\key-icon.png" />
@@ -27,6 +28,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Nlog.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="GMap.NET.Presentation" Version="1.7.5">
 			<NoWarn>NU1701</NoWarn>
 		</PackageReference>
@@ -41,6 +49,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
 		<PackageReference Include="SkiaSharp" Version="2.88.3" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.119" />
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />

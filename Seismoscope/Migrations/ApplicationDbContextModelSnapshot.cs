@@ -65,6 +65,7 @@ namespace Seismoscope.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Nom")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Région")
