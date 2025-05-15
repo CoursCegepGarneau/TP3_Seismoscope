@@ -9,6 +9,6 @@ namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface ISensorAdjustementService
     {
-        void EvaluateAndApply(SeismicEvent seismicEvents, Sensor sensor);
+        void AdjustSensors(SeismicEvent seismicEvents, Sensor sensor);
     }
 }

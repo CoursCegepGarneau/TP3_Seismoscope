@@ -17,7 +17,7 @@ namespace Seismoscope.Utils.Services
             _seismicEventStore = eventStore;
         }
 
-        public void EvaluateAndApply(SeismicEvent seismicEvent, Sensor sensor)
+        public void AdjustSensors(SeismicEvent seismicEvent, Sensor sensor)
         {
             _seismicEventStore.AddEvent(seismicEvent);
             IReadOnlyCollection<SeismicEvent> lastEvents = _seismicEventStore.GetLastSeismicEvents();
