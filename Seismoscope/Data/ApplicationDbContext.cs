@@ -3,46 +3,73 @@ using Seismoscope.Model;
 using Seismoscope.Utils.Services;
 using Seismoscope.Utils.Enums;
 using System.IO;
+using Seismoscope.Utils.Services.Interfaces;
+using System.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NLog;
+using Seismoscope.Utils;
 
 public class ApplicationDbContext : DbContext
 {
+    readonly static ILogger logger = LogManager.GetCurrentClassLogger();
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+         : base(options)
+    {
+    }
 
-    public ApplicationDbContext() : base() { }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public ApplicationDbContext()
+    {
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var dbPath = Path.Combine(@"C:\Seismoscope\", "Seismoscope.db");
-            var directory = Path.GetDirectoryName(dbPath)
-                          ?? throw new InvalidOperationException("Chemin du répertoire invalide.");
+
+            var dbPath = ConfigurationManager.AppSettings["DbPath"];
+            if (string.IsNullOrWhiteSpace(dbPath))
+            {
+                logger.Fatal("DbPath manquant dans App.config");
+                throw new InvalidOperationException("DbPath manquant dans App.config");
+            }
+            var directory = Path.GetDirectoryName(dbPath)!;
             Directory.CreateDirectory(directory);
-            var connectionString = $"Data Source={dbPath}";
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
     }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Station> Stations { get; set; }
-
     public DbSet<Sensor> Sensors { get; set; }
-
     public DbSet<Employe> Employes { get; set; }
     public DbSet<Admin> Admins { get; set; }
 
     public void SeedData()
     {
-        // Étape 1 : Ajout des stations
-        var stationList = new[]
+        try
         {
+            logger.Info("Ajout des stations par défaut...");
+            AddDefaultStations();
+            logger.Info("Ajout des utilisateurs par défaut...");
+            AddDefaultUsers();
+            logger.Info("Ajout des capteurs par défaut...");
+            AddDefaultSensors();
+        }
+        catch (Exception ex)
+        {
+            logger.Warn(ex, $"Erreur lors de l'ajout des données");
+        }
+    }
+    private void AddDefaultStations()
+    {
+        var stationList = new[]
+            {
             new Station { Nom = "Station A", Région = "Québec", Latitude = 45.5, Longitude = -73.6 },
             new Station { Nom = "Station B", Région = "Ontario", Latitude = 43.7, Longitude = -79.4 },
             new Station { Nom = "Station C", Région = "Colombie-Britannique", Latitude = 49.2, Longitude = -123.1 },
             new Station { Nom = "Station D", Région = "Alberta", Latitude = 53.5, Longitude = -113.5 },
             new Station { Nom = "Station E", Région = "Manitoba", Latitude = 49.9, Longitude = -97.1 }
-        };
+            };
 
         foreach (var station in stationList)
         {
@@ -52,7 +79,12 @@ public class ApplicationDbContext : DbContext
             }
         }
         SaveChanges();
+    }
 
+    private void AddDefaultSensors()
+    {
+        if (Sensors.Any())
+            return;
 
         var stationA = Stations.First(s => s.Nom == "Station A");
         var stationB = Stations.First(s => s.Nom == "Station B");
@@ -60,54 +92,93 @@ public class ApplicationDbContext : DbContext
         var stationD = Stations.First(s => s.Nom == "Station D");
         var stationE = Stations.First(s => s.Nom == "Station E");
 
-
-
-        // Étape 2 : Ajout des utilisateurs si aucun
-        if (!Users.Any())
-        {
-            Users.AddRange(
-                new Admin
-                {
-                    Prenom = "John",
-                    Nom = "Doe",
-                    Username = "johndoe",
-                    Password = "password123"
-                },
-                new Employe
-                {
-                    Prenom = "Jane",
-                    Nom = "Doe",
-                    Username = "janedoe",
-                    Password = "password123",
-                    Station = stationA
-                },
-                new Employe
-                {
-                    Prenom = "Riadh",
-                    Nom = "Cadi",
-                    Username = "riadh",
-                    Password = "123456",
-                    Station = stationC
-                }
-            );
-        }
-
-
-
-        Sensors.RemoveRange(Sensors); // Supprime tous les capteurs
-        SaveChanges();
-
         Sensors.AddRange(
-                new Sensor { Name = "Sensor 1", Treshold = 3.5, Frequency = 77, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationA },
-                new Sensor { Name = "Sensor 2", Treshold = 4.0, Frequency = 80, Delivered = false, Operational = true, SensorStatus = true, assignedStation = stationA },
-                new Sensor { Name = "Sensor 3", Treshold = 2.8, Frequency = 65, Delivered = true, Operational = true, SensorStatus = false, assignedStation = stationB },
-                new Sensor { Name = "Sensor 4", Treshold = 3.2, Frequency = 90, Delivered = false, Operational = false, SensorStatus = true, assignedStation = stationB },
-                new Sensor { Name = "Sensor 5", Treshold = 5.0, Frequency = 100, Delivered = true, Operational = false, SensorStatus = false, assignedStation = stationC },
-                new Sensor { Name = "Sensor 6", Treshold = 3.7, Frequency = 85, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationC },
-                new Sensor { Name = "Sensor 7", Treshold = 2.5, Frequency = 72, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationD },
-                new Sensor { Name = "Sensor 8", Treshold = 4.2, Frequency = 88, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationD },
-                new Sensor { Name = "Sensor 9", Treshold = 3.0, Frequency = 60, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationE },
-                new Sensor { Name = "Sensor 10", Treshold = 4.5, Frequency = 95, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationE });
+            new Sensor { Name = "Sensor 1", Treshold = 3.5, Frequency = 77, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationA },
+            new Sensor { Name = "Sensor 2", Treshold = 4.0, Frequency = 80, Delivered = false, Operational = true, SensorStatus = true, assignedStation = stationA },
+            new Sensor { Name = "Sensor 3", Treshold = 2.8, Frequency = 65, Delivered = true, Operational = true, SensorStatus = false, assignedStation = stationB },
+            new Sensor { Name = "Sensor 4", Treshold = 3.2, Frequency = 90, Delivered = false, Operational = false, SensorStatus = true, assignedStation = stationB },
+            new Sensor { Name = "Sensor 5", Treshold = 5.0, Frequency = 100, Delivered = true, Operational = false, SensorStatus = false, assignedStation = stationC },
+            new Sensor { Name = "Sensor 6", Treshold = 3.7, Frequency = 85, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationC },
+            new Sensor { Name = "Sensor 7", Treshold = 2.5, Frequency = 72, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationD },
+            new Sensor { Name = "Sensor 8", Treshold = 4.2, Frequency = 88, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationD },
+            new Sensor { Name = "Sensor 9", Treshold = 3.0, Frequency = 60, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationE },
+            new Sensor { Name = "Sensor 10", Treshold = 4.5, Frequency = 95, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationE }
+        );
+
+        SaveChanges();
+    }
+
+    private void AddDefaultUsers()
+    {
+        int count = int.Parse(ConfigurationManager.AppSettings["DefaultUsers.Count"] ?? "0");
+        logger.Debug($"Nombre d'utilisateurs par défaut à traiter:{count}");
+        for (int i = 1; i <= count; i++)
+        {
+            var DefaultUser = ConfigurationManager.AppSettings[$"DefaultUser.{i}"];
+            try
+            {
+                if (DefaultUser.Empty())
+                {
+                    logger.Error($"Clé 'DefaultUser.{i}' introuvable dans App.config");
+                    throw new ConfigurationErrorsException($"Clé 'DefaultUser.{i}' manquant");
+                }
+
+
+                var parts = DefaultUser!.Split('|');
+                if (parts.Length < 5)
+                {
+                    logger.Warn($"Format Invalide pour un defaultUser, attributs:{parts.Length}");
+                    throw new ConfigurationErrorsException($"Le Format est invalide pour 'DefaultUser.{i}'");
+                }
+
+                string prenom = parts[0];
+                string nom = parts[1];
+                string username = parts[2];
+                string password = parts[3];
+                string role = parts[4];
+                string? stationSuffix = parts.Length > 5 ? parts[5] : null;
+
+                if (Users.Any(u => u.Username == username))
+                {
+                    logger.Info($"L'utilisateur avec le nom d'utilisateur '{username}' existe déjà.");
+                    continue;
+                }
+                   
+                if (role == "Admin")
+                {
+                    Admins.Add(new Admin
+                    {
+                        Prenom = prenom,
+                        Nom = nom,
+                        Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password)
+                    });
+                }
+                else if (role == "Employe")
+                {
+                    Station? station = null;
+
+                    if (stationSuffix.NotEmpty())
+                    {
+                        station = Stations.FirstOrDefault(s => s.Nom.EndsWith(stationSuffix!));
+                    }
+
+                    Employes.Add(new Employe
+                    {
+                        Prenom = prenom,
+                        Nom = nom,
+                        Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password),
+                        Station = station
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Erreur lors de l'ajout des utilisateurs par défaut '{DefaultUser}'");
+            }
+        }
         SaveChanges();
     }
 }
+

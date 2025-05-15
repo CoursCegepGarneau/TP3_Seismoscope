@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using NLog;
 using Seismoscope.Utils;
 using Seismoscope.Utils.Commands;
 
@@ -8,7 +9,7 @@ namespace Seismoscope.ViewModel
 {
     public class SensorDialogViewModel : BaseViewModel
     {
-        // Propriétés pour les champs
+        readonly static Logger logger = LogManager.GetCurrentClassLogger();
         private string _name;
         public string Name
         {
@@ -79,14 +80,13 @@ namespace Seismoscope.ViewModel
         {
             if (ShowName)
             {
-                if (string.IsNullOrWhiteSpace(Name))
+                if (Name.Empty())
                 {
                     ErrorMessageName = "Le nom est requis";
                     return;
                 }
                 else
                     ErrorMessageName = "";
-                
             }
 
             if (ShowFrequency)
@@ -119,7 +119,7 @@ namespace Seismoscope.ViewModel
                 }
                 else
                     ErrorMessageTres = "";
-                
+
             }
             CloseAction?.Invoke(true);
         }

@@ -1,5 +1,6 @@
 ﻿using Seismoscope.Model;
 using System.Collections.ObjectModel;
+using NLog;
 using Seismoscope.Utils;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Commands;
@@ -19,6 +20,7 @@ namespace Seismoscope.ViewModel
         private readonly ISensorService _sensorService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 
         private Sensor? _selectedSensor;
 
@@ -51,14 +53,17 @@ namespace Seismoscope.ViewModel
             _userSessionService = userSessionService;
             _sensorService = sensorService;
             _navigationService = navigationService;
-            _userSessionService = userSessionService;
             _dialogService = dialogService;
             IsAssignationMode = userSessionService.IsAssignationMode;
             userSessionService.IsAssignationMode = false;
             AllSensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
-            NavigateToHomeViewCommand = new RelayCommand(() => _navigationService.NavigateTo<HomeViewModel>());
+            NavigateToHomeViewCommand = new RelayCommand(() =>
+            {
+                logger.Info("[Navigation] vers vue HomeView depuis SensorManagement.");
+                _navigationService.NavigateTo<HomeViewModel>();
+            });
             DeliverSensorCommand = new RelayCommand(DeliverSensor, DeliveredStatus);
-            UpdateSensorStatusCommand = new RelayCommand(UpdateSensorStatus,CanUpdateStatus);
+            UpdateSensorStatusCommand = new RelayCommand(UpdateSensorStatus, CanUpdateStatus);
             AddSensorCommand = new RelayCommand(AddSensor);
             DeleteSensorCommand = new RelayCommand(DeleteSensor, CanDelete);
             AssignSensorToStationCommand = new RelayCommand(AssignSensorToStation, CanAssignSensorToStation);
@@ -85,18 +90,22 @@ namespace Seismoscope.ViewModel
                     return;
 
                 _sensorService.UpdateSensorDeliveryStatus(SelectedSensor);
+                logger.Info($"Capteur livré : {SelectedSensor.Name}");
                 OnPropertyChanged(nameof(SelectedSensor));
                 RefreshSensors();
             }
         }
 
 
-
+        /// <summary>
+        /// Met à jour l'état d'un capteur sélectionné s'il est livré
+        /// </summary>
         private void UpdateSensorStatus()
         {
             if (SelectedSensor != null && SelectedSensor.Delivered)
             {
                 _sensorService.UpdateSensorStatus(SelectedSensor);
+                logger.Info($"Statut du capteur mis à jour : {SelectedSensor.Name}");
                 OnPropertyChanged(nameof(SelectedSensor));
                 RefreshSensors();
             }
@@ -108,7 +117,7 @@ namespace Seismoscope.ViewModel
 
         private bool CanUpdateStatus()
         {
-            return SelectedSensor != null && SelectedSensor.Delivered ==true;
+            return SelectedSensor != null && SelectedSensor.Delivered == true;
         }
         private bool DeliveredStatus()
         {
@@ -125,7 +134,7 @@ namespace Seismoscope.ViewModel
 
             bool? result = _dialogService.ShowDialog(dialogVM);
             if (result == true &&
-                !string.IsNullOrWhiteSpace(dialogVM.Name) &&
+                !(dialogVM.Name).Empty() &&
                 double.TryParse(dialogVM.Frequency, out double freq) &&
                 double.TryParse(dialogVM.Treshold, out double thr))
             {
@@ -141,8 +150,12 @@ namespace Seismoscope.ViewModel
                 };
 
                 _sensorService.AddSensor(newSensor);
+                logger.Info($"Nouveau capteur ajouté avec succès à la base de donnée: Nom={newSensor.Name}, Fréquence={newSensor.Frequency}, Seuil={newSensor.Treshold}");
                 RefreshSensors();
             }
+            else
+                logger.Warn("Tentative d'ajout de capteur échouée: Champs invalides ou annulés");
+            
         }
 
         private void DeleteSensor()
@@ -150,6 +163,7 @@ namespace Seismoscope.ViewModel
             if (SelectedSensor != null && !SelectedSensor.SensorStatus)
             {
                 _sensorService.DeleteSensor(SelectedSensor);
+                logger.Info($"Capteur supprimé : ID={SelectedSensor.Id}, Nom={SelectedSensor.Name}");
                 RefreshSensors();
             }
         }
@@ -202,12 +216,11 @@ namespace Seismoscope.ViewModel
             SelectedSensor.Usage = SensorUsage.Assigne;
             SelectedSensor.Operational = true;
             _sensorService.UpdateSensor(SelectedSensor);
-            // Revenir à la vue des capteurs assignés
+            logger.Info($"Capteur assigné : {SelectedSensor.Name} à la station {station.Nom}");
             _navigationService.NavigateTo<SensorViewModel>();
             if (_navigationService.CurrentView is SensorViewModel sensorVM)
-            {
                 sensorVM.RefreshSensors();
-            }
+
         }
 
         private bool CanAssignSensorToStation()

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Seismoscope.Model;
 using Seismoscope.Model.DAL;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils;
+using NLog;
 using Seismoscope.Utils.Commands;
 using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Utils.Services;
@@ -17,6 +14,7 @@ namespace Seismoscope.ViewModel
 {
     public class ConnectUserViewModel : BaseViewModel
     {
+        readonly static ILogger logger = LogManager.GetCurrentClassLogger();
         private readonly IUserService _userService;
         private INavigationService _navigationService;
         private IUserSessionService _userSessionService;
@@ -64,15 +62,13 @@ namespace Seismoscope.ViewModel
         }
 
         public ICommand ConnectCommand { get; set; }
-
-        // Méthode pour gérer la connexion de l'utilisateur
         private void Connect()
         {
             User? user = _userService.AuthenticateUser(Username!, Password!);
             if (user != null)
             {
+                logger.Info($"L'utilisateur {user.Username} s'est connecté avec succès.");
                 _userSessionService.ConnectedUser = user;
-
 
                 if (user is Employe)
                 {
@@ -86,12 +82,15 @@ namespace Seismoscope.ViewModel
             }
             else
             {
+                logger.Warn($"Échec de la connexion pour l'utilisateur {Username}.");
+                if (HasErrors)
+                    logger.Warn("Erreurs de validation présentes : " + string.Join(" | ", ErrorMessages));
+                
                 AddError(nameof(Password), "Utilisateur ou mot de passe invalide.");
                 OnPropertyChanged(nameof(ErrorMessages));
             }
         }
 
-        // Vérifie si la commande de connexion peut être exécutée
         private bool CanConnect()
         {
             bool allRequiredFieldsAreEntered = Username.NotEmpty() && Password.NotEmpty();

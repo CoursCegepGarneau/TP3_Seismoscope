@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils;
+using NLog;
 using Seismoscope.Model;
 using Seismoscope.Model.DAL;
 using Seismoscope.Utils.Commands;
@@ -20,7 +21,7 @@ namespace Seismoscope.ViewModel
 
     public class SensorViewModel : BaseViewModel
     {
-
+        private readonly static Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ISensorService _sensorService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
@@ -121,6 +122,7 @@ namespace Seismoscope.ViewModel
             if (SelectedSensor != null)
             {
                 _sensorService.UpdateSensorStatus(SelectedSensor);
+                logger.Info($"[Capteur] Statut mis à jour : {SelectedSensor.Name}");
                 OnPropertyChanged(nameof(SelectedSensor));
                 RefreshSensors();
             }
@@ -142,8 +144,10 @@ namespace Seismoscope.ViewModel
             bool? result = _dialogService.ShowDialog(dialogVM);
             if (result == true)
             {
+                double oldFreq = SelectedSensor.Frequency;
                 SelectedSensor.Frequency = double.Parse(dialogVM.Frequency, CultureInfo.InvariantCulture);
                 _sensorService.ChangeSensorFrequency(SelectedSensor);
+                logger.Info($"[Capteur] Fréquence modifiée : {SelectedSensor.Name}, de {oldFreq} à {SelectedSensor.Frequency}");
                 OnPropertyChanged(nameof(SelectedSensor));
                 RefreshSensors();
             }
@@ -167,8 +171,10 @@ namespace Seismoscope.ViewModel
             bool? result = _dialogService.ShowDialog(dialogVM);
             if (result == true)
             {
+                double oldTreshold = SelectedSensor.Treshold;
                 SelectedSensor.Treshold = double.Parse(dialogVM.Treshold, CultureInfo.InvariantCulture);
                 _sensorService.ChangeSensorTreshold(SelectedSensor);
+                logger.Info($"[Capteur] Seuil modifié : {SelectedSensor.Name}, de {oldTreshold} à {SelectedSensor.Treshold}");
                 OnPropertyChanged(nameof(SelectedSensor));
                 RefreshSensors();
             }
@@ -176,15 +182,16 @@ namespace Seismoscope.ViewModel
 
         private void NavigateToSensorManagementForAssignment()
         {
+            logger.Info("[Navigation] Vers SensorManagementViewModel (assignation)");
             _userSessionService.IsAssignationMode = true;
             _navigationService.NavigateTo<SensorManagementViewModel>();
         }
-
 
         private void Delete()
         {
             if (SelectedSensor is null)
                 return;
+            logger.Info($"[Capteur] Supprimé : {SelectedSensor.Name} (ID: {SelectedSensor.Id})");
             _sensorService.DeleteSensor(SelectedSensor);
             Sensors.Remove(SelectedSensor);
             SelectedSensor = null;
