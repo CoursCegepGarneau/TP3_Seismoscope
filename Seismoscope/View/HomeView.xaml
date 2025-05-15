@@ -15,20 +15,24 @@
                     Background="#EEE"
                     Margin="5">
             <Button Content="Accueil"
+                    Width="150"
                     Margin="10"
-                    Height="25"
+                    Foreground ="#1974D2"  Background ="#F5F5F5"
                     Command=""/>
-            <Button Content="Se déconnecter"
-                    Margin="10"
-                    Height="25"
-                    Command="{Binding LogoutCommand}"
-                    Visibility="{Binding UserSessionService.IsUserConnected, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
             <!--SECTION DEBUG POUR VIEW SENSOR-->
             <Button Content="Voir les capteurs" 
                 Width="150"
                 Margin="10"
+                    Foreground ="#1974D2"  Background ="#F5F5F5"
                 Command="{Binding NavigateToSensorViewCommand}"/>
+            <Button Content="Se déconnecter"
+                    Height="25"
+                    Width="150"
+                    Margin="10,40,10,10"
+                    
+                    Command="{Binding LogoutCommand}"
+                    Visibility="{Binding UserSessionService.IsUserConnected, Converter={StaticResource BoolToVisibilityConverter}}" />
 
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="10">
@@ -50,12 +54,12 @@
                         <TextBlock Text="Vous êtes un employé"
                                    FontSize="18"
                                    FontWeight="Bold"
-                                   Foreground="#462AD8"
+                                   Foreground ="#1974D2"
                                    Margin="0,0,0,10"/>
                         <TextBlock Text="📍 Station assignée"
                                    FontSize="18"
                                    FontWeight="Bold"
-                                   Foreground="#462AD8"
+                                   Foreground ="#1974D2"
                                    Margin="0,0,0,10"/>
                         <TextBlock Text="{Binding StationInformations}" 
                                    FontSize="16"
@@ -67,13 +71,7 @@
             </StackPanel>
 
             <!-- Zone ADMIN -->
-            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="🗺️ Vous êtes un admin. Interface administrateur à venir..."
-                           FontSize="18"
-                           Foreground="DarkRed"
-                           FontWeight="Bold"
-                           Margin="20"/>
-            </StackPanel>
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
     </Grid>
 </UserControl>

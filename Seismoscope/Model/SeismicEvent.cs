@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Seismoscope.Model
 {
-    public class SismiqueLecture
+    public class SeismicEvent
     {
         public string TypeOnde { get; set; }
         public double Amplitude { get; set; }

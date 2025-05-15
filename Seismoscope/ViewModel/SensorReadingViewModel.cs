@@ -47,7 +47,7 @@ namespace Seismoscope.ViewModel
 
         private string _csvFilePath;
 
-        private List<SismiqueLecture> _donneesSismiques;
+        private List<SeismicEvent> _donneesSismiques;
 
         public ObservableCollection<Sensor> Sensors
         {

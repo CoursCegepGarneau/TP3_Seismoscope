@@ -18,6 +18,7 @@
         <!-- ✅ Menu vertical fixe à gauche -->
         <StackPanel Grid.Column="0" Background="#F5F5F5" Margin="10">
             <Button Content="Accueil" Margin="10" FontSize="16" Foreground ="#1974D2"  Background ="#F5F5F5" Command="{Binding NavigateToHomeViewCommand}" />
+            <Button Content="Accueil" Margin="10" FontSize="16" Foreground ="#1974D2"  Background ="#F5F5F5" Command="{Binding NavigateToHomeViewCommand}" />
             <Button Content="Charger Données ?" Margin="10" Height="25" Command="{Binding ChargerDonnees}"></Button>
         </StackPanel>
 
