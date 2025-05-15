@@ -59,7 +59,7 @@ namespace Seismoscope.ViewModel
             AllSensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
             NavigateToHomeViewCommand = new RelayCommand(() =>
             {
-                logger.Info("Retour à la vue HomeView Depuis SensorManagement.");
+                logger.Info("[Navigation] vers vue HomeView depuis SensorManagement.");
                 _navigationService.NavigateTo<HomeViewModel>();
             });
             DeliverSensorCommand = new RelayCommand(DeliverSensor, DeliveredStatus);

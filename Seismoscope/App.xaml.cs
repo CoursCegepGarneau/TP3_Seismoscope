@@ -29,6 +29,7 @@ namespace Seismoscope
                 .SetBasePath(Directory.GetCurrentDirectory());
             IConfiguration configuration = builder.Build();
             IServiceCollection services = new ServiceCollection();
+            GloblExceptionHandler();
 
             services.AddSingleton<MainWindow>(provider => new MainWindow
             {
@@ -98,5 +99,36 @@ namespace Seismoscope
 
             base.OnStartup(e);
         }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            logger.Info("Fermeture de l'application");
+            LogManager.Shutdown();
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                var logger = LogManager.GetCurrentClassLogger();
+                logger.Fatal(args.ExceptionObject as Exception, "Exception non gérée détectée !");
+                LogManager.Shutdown();
+            };
+        }
+
+        private void GloblExceptionHandler() 
+        {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                logger.Fatal(args.ExceptionObject as Exception, "💥 Exception non gérée de type (AppDomain) !");
+                LogManager.Shutdown();
+            };
+
+            this.DispatcherUnhandledException += (sender, args) =>
+            {
+                logger.Fatal(args.Exception, "💥 Exception non gérée de type (UI Thread) !");
+                args.Handled = true; // Évite le crash brutal de l'app
+                LogManager.Shutdown();
+            };
+        }
+
+
     }
 }
