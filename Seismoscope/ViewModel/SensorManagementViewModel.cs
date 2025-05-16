@@ -6,7 +6,6 @@ using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Commands;
 using Seismoscope.Utils.Services.Interfaces;
 using System.Windows.Input;
-using Seismoscope.Services.Interfaces;
 using Seismoscope.Utils.Enums;
 using System.Reflection.Metadata;
 using static Seismoscope.ViewModel.SensorViewModel;

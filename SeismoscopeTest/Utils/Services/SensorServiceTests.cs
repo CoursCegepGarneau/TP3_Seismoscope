@@ -4,6 +4,7 @@ using Seismoscope.Data.Repositories.Interfaces;
 using Seismoscope.Model;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Model.Services;
+using Seismoscope.Utils.Services.Interfaces;
 using System.Collections.Generic;
 using Xunit;
 

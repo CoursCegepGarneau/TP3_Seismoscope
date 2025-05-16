@@ -9,13 +9,15 @@ using Seismoscope.Utils.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using Seismoscope.View;
-using Seismoscope.Services.Interfaces;
+using Seismoscope.Utils.Services.Interfaces;
+
 using Seismoscope.Services;
 using Seismoscope.Model.Services;
 using Seismoscope.Data.Repositories.Interfaces;
 using Seismoscope.Model;
 using NLog;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Seismoscope.Data.Repositories;
 
 namespace Seismoscope
 {
@@ -41,6 +43,7 @@ namespace Seismoscope
             services.AddSingleton<ConnectUserViewModel>();
             services.AddSingleton<SensorViewModel>();
             services.AddSingleton<SensorReadingViewModel>();
+            services.AddSingleton<EventHistoryViewModel>();
 
             services.AddSingleton<IConfigurationService, ConfigurationService>();
             services.AddSingleton<IUserService, UserService>();
@@ -52,7 +55,9 @@ namespace Seismoscope
             services.AddSingleton<ISensorService, SensorService>();
             services.AddSingleton<ISensorRepository, SensorRepository>();
             services.AddSingleton<IStationRepository, StationRepository>();
+            services.AddSingleton<IHistoriqueRepository, HistoriqueRepository>();
             services.AddSingleton<IStationService, StationService>();
+            services.AddSingleton<IHistoryService, HistoryService>();
             services.AddSingleton<Func<Type, BaseViewModel>>(serviceProvider =>
             {
                 BaseViewModel ViewModelFactory(Type viewModelType)

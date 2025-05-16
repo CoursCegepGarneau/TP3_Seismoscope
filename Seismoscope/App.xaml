@@ -43,6 +43,10 @@
             <DataTemplate DataType="{x:Type viewModel:SensorReadingViewModel}">
                 <view:SensorReadingView />
             </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type viewModel:EventHistoryViewModel}">
+                <view:EventHistoryView />
+            </DataTemplate>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         </ResourceDictionary>

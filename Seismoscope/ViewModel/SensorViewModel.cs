@@ -13,7 +13,6 @@ using Seismoscope.Utils.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Seismoscope.Services;
-using Seismoscope.Services.Interfaces;
 using Seismoscope.Utils.Enums;
 using Seismoscope.View;
 using System.Windows;
@@ -89,6 +88,8 @@ namespace Seismoscope.ViewModel
         }
 
         public ICommand NavigateToHomeViewCommand { get; set; }
+        public ICommand NavigateToHistoryViewCommand { get; set; }
+
         public ICommand ChargerDonneesCommand { get; set; }
         
         public ICommand? NavigateToSensorManagementViewCommand { get; }
@@ -125,8 +126,7 @@ namespace Seismoscope.ViewModel
 
         private CancellationTokenSource? _cts;
 
-        public ICommand StartReadingCommand => new RelayCommand(async () => await StartReadingAsync());
-        public ICommand StopReadingCommand => new RelayCommand(() => _cts?.Cancel());
+        
 
 
 
@@ -155,38 +155,7 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        private ISeries[] _series;
-        public ISeries[] Series
-        {
-            get => _series;
-            set
-            {
-                _series = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Axis[] _xAxes;
-        public Axis[] XAxes
-        {
-            get => _xAxes;
-            set
-            {
-                _xAxes = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Axis[] _yAxes;
-        public Axis[] YAxes
-        {
-            get => _yAxes;
-            set
-            {
-                _yAxes = value;
-                OnPropertyChanged();
-            }
-        }
+        
 
         private readonly Dictionary<Sensor, SKColor> _sensorColorMap = new();
         private readonly Random _rand = new();
@@ -219,6 +188,8 @@ namespace Seismoscope.ViewModel
             ChargerDonneesCommand = new RelayCommand(ChargerDonnees);
             
             NavigateToHomeViewCommand = new RelayCommand(() => navigationService.NavigateTo<HomeViewModel>());
+            NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
+
             UpdateSensorStatusCommand = new RelayCommand(UpdateSensorStatus);
             ChangeFrequencyCommand = new RelayCommand(ChangeFrequency);
             ChangeTresholdCommand = new RelayCommand(ChangeTreshold);
@@ -234,8 +205,6 @@ namespace Seismoscope.ViewModel
             });
 
 
-            LoadCsvCommand = new RelayCommand(OpenCsvDialog);
-            SetupSensorChart();
         }
 
 
@@ -416,179 +385,7 @@ namespace Seismoscope.ViewModel
 
 
 
-        private void OpenCsvDialog()
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = "CSV Files (*.csv)|*.csv",
-                Title = "Sélectionner un fichier de données sismiques"
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                _csvFilePath = dialog.FileName;
-                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
-
-                // Reset collections
-                Amplitudes.Clear();
-                Timestamps.Clear();
-
-                for (int i = 0; i < _donneesSismiques.Count && i < 5; i++)
-                {
-                    Amplitudes.Add(_donneesSismiques[i].Amplitude);
-                    Timestamps.Add($"t{i}");
-                }
-
-                
-
-
-                DonneesImportees = true;
-
-                MessageBox.Show("Fichier chargé avec succès.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
-
         
-       
-
-        private void SetupSensorChart()
-        {
-            Series = new ISeries[]
-            {
-        new LineSeries<double>
-        {
-            Values = Amplitudes,
-            GeometrySize = 8,
-            Fill = null,
-            Name = "Amplitude (mm)"
-        }
-            };
-
-            XAxes = new Axis[]
-            {
-        new Axis
-        {
-            Name = "Temps",
-            Labels = Timestamps,
-            LabelsRotation = 15
-        }
-            };
-
-            YAxes = new Axis[]
-            {
-        new Axis
-        {
-            Name = "Amplitude (mm)"
-        }
-            };
-        }
-
-
-
-
-        private async Task StartReadingAsync()
-        {
-
-            _sensorColorMap.Clear();
-
-            foreach (var sensor in Sensors)
-            {
-                if (!_sensorColorMap.ContainsKey(sensor))
-                    _sensorColorMap[sensor] = GenerateRandomColor();
-            }
-            if (_donneesSismiques == null || _donneesSismiques.Count == 0 || Sensors == null)
-                return;
-
-            _cts = new CancellationTokenSource();
-            IsReading = true;
-
-            int maxPoints = 30;
-
-            // Dictionnaire : capteur -> liste des amplitudes
-            var sensorSeriesDict = new Dictionary<Sensor, ObservableCollection<double>>();
-            var timestamps = new ObservableCollection<string>();
-
-            foreach (var sensor in Sensors)
-            {
-                sensorSeriesDict[sensor] = new ObservableCollection<double>();
-            }
-
-            for (int i = 0; i < _donneesSismiques.Count; i++)
-            {
-                if (_cts.IsCancellationRequested)
-                    break;
-
-                var data = _donneesSismiques[i];
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    timestamps.Add($"t{i}");
-                    if (timestamps.Count > maxPoints)
-                        timestamps.RemoveAt(0);
-
-                    foreach (var sensor in Sensors)
-                    {
-                        var values = sensorSeriesDict[sensor];
-
-                        if (values.Count >= maxPoints)
-                            values.RemoveAt(0);
-
-                        values.Add(data.Amplitude);
-
-                        if (data.Amplitude > sensor.Treshold)
-                        {
-                            MessageBox.Show($"🌍 {sensor.Name} a détecté un événement : {data.TypeOnde} - {data.Amplitude} mm", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                            // Pour historique
-
-                            HistoriqueEvenements.Add(new SeismicEvent
-                            {
-                                Timestamp = DateTime.Now,
-                                SensorName = sensor.Name,
-                                TypeOnde = data.TypeOnde,
-                                Amplitude = data.Amplitude,
-                                SeuilAtteint = sensor.Treshold
-                            });
-                            FiltrerEvenements();
-                        }
-                    }
-
-                    // Rafraîchit toutes les courbes à chaque tick
-                    Series = sensorSeriesDict.Select(kv =>
-                    {
-                        var color = _sensorColorMap[kv.Key];
-
-                        return new LineSeries<double>
-                        {
-                            Name = kv.Key.Name,
-                            Values = kv.Value,
-                            GeometrySize = 8,
-                            Fill = null,
-                            Stroke = new SolidColorPaint(color, 2),
-                            GeometryStroke = new SolidColorPaint(color, 2),
-                            GeometryFill = new SolidColorPaint(color)
-                        };
-                    }).ToArray();
-
-
-                    XAxes = new[]
-                    {
-                new Axis
-                {
-                    Name = "Temps",
-                    Labels = timestamps,
-                    LabelsRotation = 15
-                }
-            };
-                });
-
-                // Intervalle fixe ou ajusté par capteur
-                await Task.Delay(4000);
-            }
-
-            IsReading = false;
-        }
 
         public void FiltrerEvenements()
         {

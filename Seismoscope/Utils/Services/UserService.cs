@@ -1,5 +1,6 @@
 ﻿using Seismoscope.Model.Interfaces;
 using Seismoscope.Model;
+using Seismoscope.Utils.Services.Interfaces;
 
 namespace Seismoscope.Model.Services
 {

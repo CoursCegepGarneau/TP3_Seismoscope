@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Seismoscope.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -81,6 +82,36 @@ namespace Seismoscope.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Historiques",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DateHeure = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    TypeOnde = table.Column<string>(type: "TEXT", nullable: false),
+                    Amplitude = table.Column<double>(type: "REAL", nullable: false),
+                    Note = table.Column<string>(type: "TEXT", nullable: false),
+                    SeuilAuMoment = table.Column<double>(type: "REAL", nullable: false),
+                    SensorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SensorName = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Historiques", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Historiques_Sensors_SensorId",
+                        column: x => x.SensorId,
+                        principalTable: "Sensors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Historiques_SensorId",
+                table: "Historiques",
+                column: "SensorId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Sensors_assignedStationId",
                 table: "Sensors",
@@ -101,10 +132,13 @@ namespace Seismoscope.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Sensors");
+                name: "Historiques");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Sensors");
 
             migrationBuilder.DropTable(
                 name: "Stations");

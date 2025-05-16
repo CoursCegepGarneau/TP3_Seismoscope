@@ -17,8 +17,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Seismoscope.Model.Interfaces;
-using Seismoscope.Utils.Services.Interfaces;
+
 using Seismoscope.Utils.Services;
+using Seismoscope.Data.Repositories.Interfaces;
+using Seismoscope.Utils.Services.Interfaces;
+using Seismoscope.Model.Services;
 
 namespace Seismoscope.ViewModel
 {
@@ -30,6 +33,11 @@ namespace Seismoscope.ViewModel
         private readonly ISensorService _sensorService;
         private readonly INavigationService _navigationService;
         private readonly IUserSessionService _userSessionService;
+        private readonly IHistoryService _historyService;
+
+
+        public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
+        public ObservableCollection<SeismicEvent> EvenementsFiltres { get; set; } = new();
 
 
 
@@ -74,11 +82,12 @@ namespace Seismoscope.ViewModel
 
         public ICommand StartReadingCommand => new RelayCommand(async () => await StartReadingAsync());
         public ICommand StopReadingCommand => new RelayCommand(() => _cts?.Cancel());
+        public ICommand NavigateToHistoryViewCommand { get; set; }
 
 
 
-        
-        
+
+
         private bool _donneesImportees;
         private bool _isReading;
 
@@ -108,12 +117,14 @@ namespace Seismoscope.ViewModel
 
 
 
-        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService)
+        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, IHistoryService historyService)
         {
 
             _userSessionService = userSessionService;
             _sensorService = sensorService;
             _navigationService = navigationService;
+
+            _historyService = historyService;
 
             Sensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
             RefreshSensors();
@@ -123,6 +134,8 @@ namespace Seismoscope.ViewModel
             station= _userSessionService.AsEmploye?.Station;
             LoadCsvCommand = new RelayCommand(OpenCsvDialog);
             GoBackCommand = new RelayCommand(() => navigationService.NavigateTo<SensorViewModel>());
+            NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
+
         }
 
         public void RefreshSensors()
@@ -232,7 +245,9 @@ namespace Seismoscope.ViewModel
             _cts = new CancellationTokenSource();
             IsReading = true;
             double seuil = SelectedSensor.Treshold;
-            int intervalMs = (int)(SelectedSensor.Frequency * 1000);
+            double seconds = 1.0 / SelectedSensor.Frequency;
+            int intervalMs = (int)(seconds * 1000);
+
 
             for (int i = 0; i < _donneesSismiques.Count; i++)
             {
@@ -258,6 +273,30 @@ namespace Seismoscope.ViewModel
                         MessageBox.Show($"🌍 Événement détecté: {data.TypeOnde} - {data.Amplitude} mm", "Alerte", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                         // TODO : Ajouter à l'historique de la station ici
+
+
+                        EvenementsFiltres.Add(new SeismicEvent
+                        {
+                            Timestamp = DateTime.Now,
+                            SensorName = SelectedSensor.Name,
+                            TypeOnde = data.TypeOnde,
+                            Amplitude = data.Amplitude,
+                            SeuilAtteint = SelectedSensor.Treshold
+                        });
+                        //FiltrerEvenements();
+
+
+                        var evenement = new HistoriqueEvenement
+                        {
+                            DateHeure = DateTime.Now,
+                            Amplitude = data.Amplitude,
+                            TypeOnde = data.TypeOnde,
+                            SeuilAuMoment = SelectedSensor.Treshold,
+                            SensorId = SelectedSensor.Id,
+                            SensorName = SelectedSensor.Name,
+                        };
+
+                        _historyService.AjouterHistory(evenement);
                     }
                 });
 
@@ -266,6 +305,17 @@ namespace Seismoscope.ViewModel
 
             IsReading = false;
         }
+
+        //public void FiltrerEvenements()
+        //{
+        //    EvenementsFiltres.Clear();
+        //    var filtrés = SelectedTypeOnde == "Tous"
+        //        ? HistoriqueEvenements
+        //        : new ObservableCollection<SeismicEvent>(HistoriqueEvenements.Where(e => e.TypeOnde == SelectedTypeOnde));
+
+        //    foreach (var evt in filtrés)
+        //        EvenementsFiltres.Add(evt);
+        //}
 
 
     }

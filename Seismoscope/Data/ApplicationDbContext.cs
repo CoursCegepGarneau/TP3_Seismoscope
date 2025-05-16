@@ -44,6 +44,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Employe> Employes { get; set; }
     public DbSet<Admin> Admins { get; set; }
 
+    public DbSet<HistoriqueEvenement> Historiques { get; set; }
+
     public void SeedData()
     {
         try
