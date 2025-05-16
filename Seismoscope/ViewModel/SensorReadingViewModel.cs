@@ -122,7 +122,7 @@ namespace Seismoscope.ViewModel
             if (dialog.ShowDialog() == true)
             {
                 _csvFilePath = dialog.FileName;
-                //_donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
+                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
 
                 MessageBox.Show("Fichier chargé avec succès.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
