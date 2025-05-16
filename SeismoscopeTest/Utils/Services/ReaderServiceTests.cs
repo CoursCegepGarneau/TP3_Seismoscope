@@ -14,7 +14,7 @@ namespace SeismoscopeTest.Utils.Services
         {
             // Arrange
             var tempFile = Path.GetTempFileName();
-            var lines = new[] { "Line1", "Line2", "Line3" };
+            var lines = new[] { "Ligne1", "Ligne2", "Ligne3" };
             File.WriteAllLines(tempFile, lines);
 
             var service = new ReaderService();
@@ -24,8 +24,8 @@ namespace SeismoscopeTest.Utils.Services
 
             // Assert
             Assert.Equal(lines.Length, service.GetTotalLines());
-            Assert.Equal("Line1", service.GetNextLine(0));
-            Assert.Equal("Line3", service.GetNextLine(2));
+            Assert.Equal("Ligne1", service.GetNextLine(0));
+            Assert.Equal("Ligne3", service.GetNextLine(2));
             Assert.Null(service.GetNextLine(3));
 
             // Cleanup
