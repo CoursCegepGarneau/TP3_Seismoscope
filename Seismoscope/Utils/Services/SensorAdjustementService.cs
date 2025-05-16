@@ -84,6 +84,5 @@ namespace Seismoscope.Utils.Services
                 sensor.Frequency = sensor.DefaultFrequency;
             }
         }
-
     }
 }
