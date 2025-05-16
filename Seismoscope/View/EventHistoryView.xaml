@@ -67,12 +67,12 @@
 
                 <DataGrid ItemsSource="{Binding AllHistory}" AutoGenerateColumns="False" Margin="0,10,37,260" Grid.Row="1">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date" Binding="{Binding DateHeure, StringFormat=dd/MM/yyyy}" Width="150"/>
-                        <DataGridTextColumn Header="Heure" Binding="{Binding DateHeure, StringFormat=HH:mm:ss}" Width="100"/>
-                        <DataGridTextColumn Header="Capteur" Binding="{Binding SensorName}" Width="150"/>
-                        <DataGridTextColumn Header="Amplitude" Binding="{Binding Amplitude}" Width="150"/>
-                        <DataGridTextColumn Header="Seuil Atteint" Binding="{Binding SeuilAuMoment}" Width="150"/>
-                        <DataGridTextColumn Header="Type d'onde" Binding="{Binding TypeOnde}" Width="150"/>
+                        <DataGridTextColumn Header="Date" Binding="{Binding DateHeure, StringFormat=dd/MM/yyyy}" Width="150" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Heure" Binding="{Binding DateHeure, StringFormat=HH:mm:ss}" Width="100" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Capteur" Binding="{Binding SensorName}" Width="150" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Amplitude" Binding="{Binding Amplitude, StringFormat=F2}" Width="150" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Seuil Atteint" Binding="{Binding SeuilAuMoment, StringFormat=F2}" Width="150" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Type d'onde" Binding="{Binding TypeOnde}" Width="150" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
