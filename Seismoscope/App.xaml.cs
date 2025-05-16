@@ -53,6 +53,8 @@ namespace Seismoscope
             services.AddSingleton<ISensorRepository, SensorRepository>();
             services.AddSingleton<IStationRepository, StationRepository>();
             services.AddSingleton<IStationService, StationService>();
+            services.AddSingleton<ISensorAdjustementService, SensorAdjustementService>();
+            services.AddSingleton<ISeismicEventStoreService, SeismicEventStoreService>();
             services.AddSingleton<Func<Type, BaseViewModel>>(serviceProvider =>
             {
                 BaseViewModel ViewModelFactory(Type viewModelType)
