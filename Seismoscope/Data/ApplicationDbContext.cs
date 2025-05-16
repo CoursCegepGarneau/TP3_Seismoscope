@@ -93,17 +93,37 @@ public class ApplicationDbContext : DbContext
         var stationE = Stations.First(s => s.Nom == "Station E");
 
         Sensors.AddRange(
-            new Sensor { Name = "Sensor 1", Treshold = 3.5, Frequency = 77, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationA },
-            new Sensor { Name = "Sensor 2", Treshold = 4.0, Frequency = 80, Delivered = false, Operational = true, SensorStatus = true, assignedStation = stationA },
-            new Sensor { Name = "Sensor 3", Treshold = 2.8, Frequency = 65, Delivered = true, Operational = true, SensorStatus = false, assignedStation = stationB },
-            new Sensor { Name = "Sensor 4", Treshold = 3.2, Frequency = 90, Delivered = false, Operational = false, SensorStatus = true, assignedStation = stationB },
-            new Sensor { Name = "Sensor 5", Treshold = 5.0, Frequency = 100, Delivered = true, Operational = false, SensorStatus = false, assignedStation = stationC },
-            new Sensor { Name = "Sensor 6", Treshold = 3.7, Frequency = 85, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationC },
-            new Sensor { Name = "Sensor 7", Treshold = 2.5, Frequency = 72, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationD },
-            new Sensor { Name = "Sensor 8", Treshold = 4.2, Frequency = 88, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationD },
-            new Sensor { Name = "Sensor 9", Treshold = 3.0, Frequency = 60, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationE },
-            new Sensor { Name = "Sensor 10", Treshold = 4.5, Frequency = 95, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationE }
+        // ➤ Test Règle 1 (amplitude > 130% seuil)
+        new Sensor { Name = "Sensor 1", Treshold = 42, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationA },
+
+        // ➤ Test Règle 2 (5 valeurs consécutives ≥ 80% du seuil)
+        new Sensor { Name = "Sensor 2", Treshold = 49, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationA },
+
+        // ➤ Test Règle 3 (amplitude > 160% du seuil → augmente fréquence)
+        new Sensor { Name = "Sensor 3", Treshold = 50, Frequency = 10, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationB },
+
+        // ➤ Test Règle 4 (10 lectures calmes pour revenir à fréquence par défaut)
+        new Sensor { Name = "Sensor 4", Treshold = 50, Frequency = 2, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationB },
+
+        // ➤ Valeur de seuil basse (événements déclenchés facilement)
+        new Sensor { Name = "Sensor 5", Treshold = 20, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationC },
+
+        // ➤ Valeur de seuil haute (événements rares)
+        new Sensor { Name = "Sensor 6", Treshold = 80, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationC },
+
+        // ➤ Capteur désactivé (non livré / non opérationnel)
+        new Sensor { Name = "Sensor 7", Treshold = 60, Frequency = 5, Delivered = false, Operational = false, SensorStatus = false, assignedStation = stationD },
+
+        // ➤ Capteur actif sans seuil particulier (contrôle)
+        new Sensor { Name = "Sensor 8", Treshold = 45, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationD },
+
+        // ➤ Capteur avec seuil moyen pour détecter micro-secousses
+        new Sensor { Name = "Sensor 9", Treshold = 35, Frequency = 7, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationE },
+
+        // ➤ Capteur limite (seuil proche du max, difficile à déclencher)
+        new Sensor { Name = "Sensor 10", Treshold = 95, Frequency = 5, Delivered = true, Operational = true, SensorStatus = true, assignedStation = stationE }
         );
+
 
         SaveChanges();
     }

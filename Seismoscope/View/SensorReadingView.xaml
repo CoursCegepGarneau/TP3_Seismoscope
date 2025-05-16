@@ -99,8 +99,8 @@
 
 
                     <Button Content="Démarrer lecture"
-                        Command="{Binding AssignSensorToStationCommand}"
-                        IsEnabled="{Binding SelectedSensor}" 
+                        Command="{Binding StartReadingCommand}"
+                        IsEnabled="{Binding DonneesImportees}" 
                         Margin="0,0,10,0"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
                         Padding="8,2"
@@ -110,20 +110,22 @@
 
                     <Button Content="Arrêter lecture"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                        IsEnabled="{Binding IsReading}" 
                         Background="#E53935" 
                         Foreground="White"
                         Padding="8,2"
                         Margin="5"
-                        Command="{Binding DeleteSensorCommand}" />
+                        Command="{Binding StopReadingCommand}" />
                 </StackPanel>
             </Grid>
 
             <lvc:CartesianChart Grid.Row="1"
                     Margin="10,90,0,20"
-                    Series="{Binding SensorSeries}"
+                    Series="{Binding Series}"
                     XAxes="{Binding XAxes}"
                     YAxes="{Binding YAxes}" 
                     LegendPosition="Right"
+                    AnimationsSpeed="0:0:0.5"
                     TooltipPosition="Top">
             </lvc:CartesianChart>
         </Grid>

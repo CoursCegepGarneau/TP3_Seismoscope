@@ -1,4 +1,6 @@
-﻿using Seismoscope.ViewModel;
+﻿using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using Seismoscope.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,13 @@ namespace Seismoscope.View
         public SensorView()
         {
             InitializeComponent();
+
+            LiveCharts.Configure(config =>
+            config
+                .AddSkiaSharp()
+                .AddDefaultMappers()
+                .AddLightTheme()
+                );
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -33,5 +42,10 @@ namespace Seismoscope.View
             }
         }
 
+        private void TypeFilterChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var vm = DataContext as SensorViewModel;
+            vm?.FiltrerEvenements();
+        }
     }
 }
