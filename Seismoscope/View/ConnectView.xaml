@@ -28,8 +28,8 @@
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
                     <Label Content="Nom d'utilisateur" Foreground="DarkGray" FontFamily="Montserrat" Margin="0,0,0,5"/>
                     <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
-                             Width="250" Height="28"
-                             FontSize="13" FontFamily="Montserrat"
+                             Width="250" Height="40"
+                             FontSize="18" FontFamily="Montserrat"
                              BorderBrush="DarkGray" BorderThickness="0,0,0,2"
                              Foreground="White" Padding="20,0,0,0">
                         <TextBox.Background>
@@ -43,7 +43,8 @@
                     <PasswordBox x:Name="PasswordBox" PasswordChanged ="PasswordBox_PasswordChanged" Width="250" Margin="10" Height="28"
                     FontSize="13" 
                     FontFamily="Montserrat"
-                    BorderThickness="0,0,0,2"
+                    Foreground="White"
+                    BorderBrush="DarkGray" BorderThickness="0,0,0,2"
                     Padding="20,5,0,0"/>
 
                     <TextBlock Text="{Binding ErrorMessages}" Foreground="Red" Margin="10" HorizontalAlignment="Center"/>

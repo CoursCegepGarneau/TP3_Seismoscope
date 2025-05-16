@@ -12,5 +12,9 @@ namespace Seismoscope.Utils.Services.Interfaces
         void NavigateTo<T>() where T : BaseViewModel;
 
         void NavigateTo(BaseViewModel viewModel);
+
+        //Surcharge pour que NavigateTo puisse passer un objet
+        void NavigateTo<TViewModel>(object parameter);
+
     }
 }

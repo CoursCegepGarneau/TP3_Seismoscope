@@ -40,6 +40,8 @@ namespace Seismoscope
             services.AddSingleton<HomeViewModel>();
             services.AddSingleton<ConnectUserViewModel>();
             services.AddSingleton<SensorViewModel>();
+            services.AddSingleton<SensorReadingViewModel>();
+
             services.AddSingleton<IConfigurationService, ConfigurationService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IUserRepository, UserRepository>();
