@@ -10,7 +10,5 @@ namespace Seismoscope.Model
     public class Admin : User
     {
         public override UserRole Role => UserRole.Admin;
-
-        // Par exemple : liste des stations accessibles, droits spéciaux...
     }
 }

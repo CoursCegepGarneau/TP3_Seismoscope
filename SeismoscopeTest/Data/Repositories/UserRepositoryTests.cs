@@ -32,12 +32,11 @@ namespace SeismoscopeTest.Data.Repositories
         private void SeedData()
         {
             var station = new Station { Nom = "Station A", Région = "Québec", Latitude = 45.5, Longitude = -73.6 };
-
             var admin = new Admin
             {
                 Id = 1,
                 Username = "admin",
-                Password = "admin123",
+                Password = BCrypt.Net.BCrypt.HashPassword("admin123"),
                 Nom = "Admin",
                 Prenom = "Admin"
             };
@@ -46,7 +45,7 @@ namespace SeismoscopeTest.Data.Repositories
             {
                 Id = 2,
                 Username = "employe",
-                Password = "employe123",
+                Password = BCrypt.Net.BCrypt.HashPassword("employe123"),
                 Nom = "Employé",
                 Prenom = "Test",
                 Station = station
@@ -92,7 +91,5 @@ namespace SeismoscopeTest.Data.Repositories
 
             Assert.Null(result);
         }
-
-
     }
 }
