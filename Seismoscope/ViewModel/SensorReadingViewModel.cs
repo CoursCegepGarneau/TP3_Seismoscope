@@ -17,11 +17,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Seismoscope.Model.Interfaces;
-
+using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Utils.Services;
 using Seismoscope.Data.Repositories.Interfaces;
 using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Model.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Seismoscope.ViewModel
 {
@@ -34,6 +35,7 @@ namespace Seismoscope.ViewModel
         private readonly INavigationService _navigationService;
         private readonly IUserSessionService _userSessionService;
         private readonly IHistoryService _historyService;
+        private readonly ISensorAdjustementService _sensorAdjustementService;
 
 
         public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
@@ -117,12 +119,13 @@ namespace Seismoscope.ViewModel
 
 
 
-        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, IHistoryService historyService)
+        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, IHistoryService historyService, ISensorAdjustementService sensorAdjustementService)
         {
 
             _userSessionService = userSessionService;
             _sensorService = sensorService;
             _navigationService = navigationService;
+            _sensorAdjustementService = sensorAdjustementService;
 
             _historyService = historyService;
 
@@ -131,7 +134,7 @@ namespace Seismoscope.ViewModel
             SetupSensorChart();
 
 
-            station= _userSessionService.AsEmploye?.Station;
+            station = _userSessionService.AsEmploye?.Station;
             LoadCsvCommand = new RelayCommand(OpenCsvDialog);
             GoBackCommand = new RelayCommand(() => navigationService.NavigateTo<SensorViewModel>());
             NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
@@ -176,8 +179,10 @@ namespace Seismoscope.ViewModel
             if (dialog.ShowDialog() == true)
             {
                 _csvFilePath = dialog.FileName;
-                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
+                //_donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
                 DonneesImportees = true;
+
+                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath, SelectedSensor, _sensorAdjustementService);
 
                 MessageBox.Show("Fichier chargé avec succès.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }

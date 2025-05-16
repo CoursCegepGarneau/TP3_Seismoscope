@@ -59,10 +59,22 @@ namespace Seismoscope.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("DefaultFrequency")
+                        .HasColumnType("REAL");
+
                     b.Property<bool>("Delivered")
                         .HasColumnType("INTEGER");
 
                     b.Property<double>("Frequency")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxFrequency")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxThreshold")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MinThreshold")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")

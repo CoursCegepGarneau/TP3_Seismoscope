@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Seismoscope.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250516211918_InitialCreate")]
+    [Migration("20250516234353_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,10 +62,22 @@ namespace Seismoscope.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("DefaultFrequency")
+                        .HasColumnType("REAL");
+
                     b.Property<bool>("Delivered")
                         .HasColumnType("INTEGER");
 
                     b.Property<double>("Frequency")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxFrequency")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxThreshold")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MinThreshold")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
