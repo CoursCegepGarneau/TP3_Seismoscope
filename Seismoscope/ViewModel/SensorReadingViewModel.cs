@@ -19,6 +19,7 @@ using System.Windows.Input;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Utils.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Seismoscope.ViewModel
 {
@@ -30,6 +31,7 @@ namespace Seismoscope.ViewModel
         private readonly ISensorService _sensorService;
         private readonly INavigationService _navigationService;
         private readonly IUserSessionService _userSessionService;
+        private readonly ISensorAdjustementService _sensorAdjustementService;
 
 
 
@@ -61,27 +63,23 @@ namespace Seismoscope.ViewModel
 
         Station station;
 
-
-
-
-
-
-
-        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService)
+        public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, ISensorAdjustementService sensorAdjustementService)
         {
 
             _userSessionService = userSessionService;
             _sensorService = sensorService;
             _navigationService = navigationService;
+            _sensorAdjustementService = sensorAdjustementService;
 
             Sensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
             RefreshSensors();
             SetupSensorChart();
 
 
-            station= _userSessionService.AsEmploye?.Station;
+            station = _userSessionService.AsEmploye?.Station;
             LoadCsvCommand = new RelayCommand(OpenCsvDialog);
             GoBackCommand = new RelayCommand(() => navigationService.NavigateTo<SensorViewModel>());
+            _sensorAdjustementService = sensorAdjustementService;
         }
 
         public void RefreshSensors()
@@ -122,7 +120,8 @@ namespace Seismoscope.ViewModel
             if (dialog.ShowDialog() == true)
             {
                 _csvFilePath = dialog.FileName;
-                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
+
+                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath, SelectedSensor, _sensorAdjustementService);
 
                 MessageBox.Show("Fichier chargé avec succès.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
