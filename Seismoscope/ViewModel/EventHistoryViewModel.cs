@@ -38,21 +38,7 @@ namespace Seismoscope.ViewModel
         private readonly IHistoryService _historyService;
         private readonly IUserSessionService _userSessionService;
 
-
-        private readonly ReaderService _csvReaderService;
-        private DispatcherTimer _readingTimer;
-        private int _csvIndex = 0;
-
-        
-        
-
         private ObservableCollection<Sensor> _sensors = null!;
-        
-
-
-
-
-
         public ObservableCollection<Sensor> Sensors
         {
             get => _sensors;
@@ -63,19 +49,7 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        private Station? _selectedStation;
-        public Station? SelectedStation
-        {
-            get => _selectedStation;
-            set
-            {
-                _selectedStation = value;
-                OnPropertyChanged();
-            }
-        }
-
         private Sensor? _selectedSensor;
-
         public Sensor? SelectedSensor
         {
             get => _selectedSensor;
@@ -90,45 +64,17 @@ namespace Seismoscope.ViewModel
 
         public ICommand NavigateToHomeViewCommand { get; set; }
         public ICommand NavigateToHistoryViewCommand { get; set; }
-        
-        
         public ICommand? NavigateToSensorManagementViewCommand { get; }
         public ICommand? NavigateToSensorManagementForAssignmentCommand { get; }
-        
         public ICommand AddSensorCommand { get; set; }
         
 
 
         private List<SeismicEvent> _donneesSismiques;
         public ObservableCollection<double> AmplitudeValues { get; set; } = new();
-
         public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
-        
-        
-
-
-
-        private int _tempsSimulé = 0;
-
         public ObservableCollection<double> Amplitudes { get; set; } = new();
         public ObservableCollection<string> Timestamps { get; set; } = new();
-
-        private ISeries[] _series;
-        public ISeries[] Series
-        {
-            get => _series;
-            set
-            {
-                _series = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-
-
-
-
 
         private ObservableCollection<HistoriqueEvenement> _allHistory = new();
         public ObservableCollection<HistoriqueEvenement> AllHistory
@@ -142,9 +88,14 @@ namespace Seismoscope.ViewModel
                 ApplyFilters(); //Pour appliquer les filtres pour la table d'historique
             }
         }
-
         public ObservableCollection<string> SensorNames { get; set; }
         public ObservableCollection<string> TypeOndes { get; set; } = new();
+        public ObservableCollection<HistoriqueEvenement> FilteredHistory { get; set; } = new();
+
+
+
+
+
         
 
 
@@ -173,21 +124,29 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        public ObservableCollection<HistoriqueEvenement> FilteredHistory { get; set; } = new();
         
 
+        private ISeries[] _series;
+        public ISeries[] Series
+        {
+            get => _series;
+            set
+            {
+                _series = value;
+                OnPropertyChanged();
+            }
+        }
 
 
-        public EventHistoryViewModel(ISensorService sensorService, INavigationService navigationService,IDialogService dialogService, IUserSessionService userSessionService, IHistoryService historyService)
+
+
+        public EventHistoryViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, IHistoryService historyService)
         {
             _sensorService = sensorService;
             _navigationService = navigationService;
             _userSessionService = userSessionService;
 
             _historyService = historyService;
-
-             
-
 
             Sensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
 
@@ -207,14 +166,6 @@ namespace Seismoscope.ViewModel
             ChargerHistorique();
 
             InitialiserFiltres();
-
-
-
-
-
-
-
-
 
         }
 
@@ -283,6 +234,9 @@ namespace Seismoscope.ViewModel
             _userSessionService.IsAssignationMode = true;
             _navigationService.NavigateTo<SensorManagementViewModel>();
         }
+
+
+        
 
     }
 }

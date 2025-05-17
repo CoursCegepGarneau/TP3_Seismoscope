@@ -20,16 +20,15 @@ using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Utils.Services;
 using Seismoscope.Data.Repositories.Interfaces;
-using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.Model.Services;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 
 namespace Seismoscope.ViewModel
 {
     public class SensorReadingViewModel : BaseViewModel
     {
-        //public ObservableCollection<SensorReading> Readings { get; set; }
-        //public ObservableCollection<SismicEvent> EventHistory { get; set; }
+        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
 
         private readonly ISensorService _sensorService;
         private readonly INavigationService _navigationService;
@@ -40,22 +39,9 @@ namespace Seismoscope.ViewModel
 
         public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
         public ObservableCollection<SeismicEvent> EvenementsFiltres { get; set; } = new();
-
-
+        public ObservableCollection<ISeries> SensorSeries { get; set; }
 
         private ObservableCollection<Sensor> _sensors = null!;
-
-        public ICommand LoadCsvCommand { get; }
-        
-
-        public RelayCommand GoBackCommand { get; }
-
-        public Sensor? SelectedSensor { get; set; }
-
-        private Timer _readingTimer;
-
-        private string _csvFilePath;
-
 
         public ObservableCollection<Sensor> Sensors
         {
@@ -67,7 +53,22 @@ namespace Seismoscope.ViewModel
             }
         }
 
-        Station station;
+
+        public Axis[] XAxes { get; set; }
+        public Axis[] YAxes { get; set; }
+
+
+
+
+        public RelayCommand GoBackCommand { get; }
+        public ICommand LoadCsvCommand { get; }
+        public ICommand StartReadingCommand => new RelayCommand(async () => await StartReadingAsync());
+        public ICommand StopReadingCommand => new RelayCommand(() => _cts?.Cancel());
+
+        public Sensor? SelectedSensor { get; set; }
+
+        private string _csvFilePath;
+
 
 
         private List<SeismicEvent> _donneesSismiques;
@@ -82,8 +83,7 @@ namespace Seismoscope.ViewModel
 
         private CancellationTokenSource? _cts;
 
-        public ICommand StartReadingCommand => new RelayCommand(async () => await StartReadingAsync());
-        public ICommand StopReadingCommand => new RelayCommand(() => _cts?.Cancel());
+        
         public ICommand NavigateToHistoryViewCommand { get; set; }
 
 
@@ -128,9 +128,6 @@ namespace Seismoscope.ViewModel
         }
 
 
-
-
-
         public SensorReadingViewModel(ISensorService sensorService, INavigationService navigationService, IUserSessionService userSessionService, IHistoryService historyService, ISensorAdjustementService sensorAdjustementService)
         {
 
@@ -146,13 +143,15 @@ namespace Seismoscope.ViewModel
             SetupSensorChart();
 
 
-            station = _userSessionService.AsEmploye?.Station;
+            
             LoadCsvCommand = new RelayCommand(OpenCsvDialog);
             GoBackCommand = new RelayCommand(() => navigationService.NavigateTo<SensorViewModel>());
             NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
 
         }
 
+        
+        
         public void RefreshSensors()
         {
             var station = _userSessionService.AsEmploye?.Station;
@@ -175,7 +174,6 @@ namespace Seismoscope.ViewModel
             if (parameter is Sensor sensor)
             {
                 SelectedSensor = sensor;
-                // Démarrer les lectures ou initialiser les données ici
             }
         }
 
@@ -204,12 +202,6 @@ namespace Seismoscope.ViewModel
                 
             }
         }
-
-        
-
-        public ObservableCollection<ISeries> SensorSeries { get; set; }
-        public Axis[] XAxes { get; set; }
-        public Axis[] YAxes { get; set; }
 
         private void SetupSensorChart()
         {
@@ -245,6 +237,101 @@ namespace Seismoscope.ViewModel
 
 
 
+        public ObservableCollection<string> MessagesUI { get; set; } = new();
+
+        public void TraiterLigne(int index, SeismicEvent data)
+        {
+            int maxPoints = 30;
+            if (Amplitudes.Count >= maxPoints)
+            {
+                Amplitudes.RemoveAt(0);
+                Timestamps.RemoveAt(0);
+            }
+
+            Amplitudes.Add(data.Amplitude);
+            Timestamps.Add($"t{index}");
+
+            if (data.Amplitude > SelectedSensor.Treshold)
+            {
+                logger.Info($"Événement détecté par {SelectedSensor.Name} | Onde : {data.TypeOnde} | Amplitude : {data.Amplitude:F2} mm | Seuil : {SelectedSensor.Treshold:F2} mm");
+                EvenementsFiltres.Add(new SeismicEvent
+                {
+                    Timestamp = DateTime.Now,
+                    SensorName = SelectedSensor.Name,
+                    TypeOnde = data.TypeOnde,
+                    Amplitude = data.Amplitude,
+                    SeuilAtteint = SelectedSensor.Treshold
+                });
+
+                _historyService.AjouterHistory(new HistoriqueEvenement
+                {
+                    DateHeure = DateTime.Now,
+                    Amplitude = data.Amplitude,
+                    TypeOnde = data.TypeOnde,
+                    SeuilAuMoment = SelectedSensor.Treshold,
+                    SensorId = SelectedSensor.Id,
+                    SensorName = SelectedSensor.Name
+                });
+            }
+
+            var messages = _sensorAdjustementService.AdjustSensors(data, SelectedSensor);
+            foreach (var msg in messages)
+            {
+                MessagesUI.Add(msg); // Pour afficher les messages de retroaction
+
+                logger.Info($"Ajustement appliqué sur {SelectedSensor.Name} → {msg}");
+            }
+        }
+
+        public async Task StartReadingAsync()
+        {
+            int maxPoints = 30;
+
+            if (_donneesSismiques == null || _donneesSismiques.Count == 0 || SelectedSensor == null)
+                return;
+
+            _cts = new CancellationTokenSource();
+            IsReading = true;
+
+            for (int i = 0; i < _donneesSismiques.Count; i++)
+            {
+                if (_cts.IsCancellationRequested)
+                    break;
+
+                var data = _donneesSismiques[i];
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    TraiterLigne(i, data);
+                });
+
+                // Fréquence dynamique 
+                double seconds = 1.0 / SelectedSensor.Frequency;
+                int intervalMs = (int)(seconds * 1000);
+                await Task.Delay(intervalMs);
+            }
+
+            IsReading = false;
+        }
+
+        public void SetDonneesSismiques(List<SeismicEvent> donnees)
+        {
+            _donneesSismiques = donnees;
+        }
+
+
+
+
+        //public void FiltrerEvenements()
+        //{
+        //    EvenementsFiltres.Clear();
+        //    var filtrés = SelectedTypeOnde == "Tous"
+        //        ? HistoriqueEvenements
+        //        : new ObservableCollection<SeismicEvent>(HistoriqueEvenements.Where(e => e.TypeOnde == SelectedTypeOnde));
+
+        //    foreach (var evt in filtrés)
+        //        EvenementsFiltres.Add(evt);
+        //}
 
         /*private async Task StartReadingAsync()
         {
@@ -316,93 +403,6 @@ namespace Seismoscope.ViewModel
 
             IsReading = false;
         }*/
-
-
-        public ObservableCollection<string> MessagesUI { get; set; } = new();
-
-        public void TraiterLigne(int index, SeismicEvent data)
-        {
-            int maxPoints = 30;
-            if (Amplitudes.Count >= maxPoints)
-            {
-                Amplitudes.RemoveAt(0);
-                Timestamps.RemoveAt(0);
-            }
-
-            Amplitudes.Add(data.Amplitude);
-            Timestamps.Add($"t{index}");
-
-            if (data.Amplitude > SelectedSensor.Treshold)
-            {
-                EvenementsFiltres.Add(new SeismicEvent
-                {
-                    Timestamp = DateTime.Now,
-                    SensorName = SelectedSensor.Name,
-                    TypeOnde = data.TypeOnde,
-                    Amplitude = data.Amplitude,
-                    SeuilAtteint = SelectedSensor.Treshold
-                });
-
-                _historyService.AjouterHistory(new HistoriqueEvenement
-                {
-                    DateHeure = DateTime.Now,
-                    Amplitude = data.Amplitude,
-                    TypeOnde = data.TypeOnde,
-                    SeuilAuMoment = SelectedSensor.Treshold,
-                    SensorId = SelectedSensor.Id,
-                    SensorName = SelectedSensor.Name
-                });
-            }
-
-            var messages = _sensorAdjustementService.AdjustSensors(data, SelectedSensor);
-            foreach (var msg in messages)
-            {
-                MessagesUI.Add(msg); // Pour afficher les messages de retroaction
-            }
-        }
-
-        private async Task StartReadingAsync()
-        {
-            int maxPoints = 30;
-
-            if (_donneesSismiques == null || _donneesSismiques.Count == 0 || SelectedSensor == null)
-                return;
-
-            _cts = new CancellationTokenSource();
-            IsReading = true;
-
-            for (int i = 0; i < _donneesSismiques.Count; i++)
-            {
-                if (_cts.IsCancellationRequested)
-                    break;
-
-                var data = _donneesSismiques[i];
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    TraiterLigne(i, data);
-                });
-
-                // ⏱ Fréquence dynamique (à recalculer après ajustement éventuel)
-                double seconds = 1.0 / SelectedSensor.Frequency;
-                int intervalMs = (int)(seconds * 1000);
-                await Task.Delay(intervalMs);
-            }
-
-            IsReading = false;
-        }
-
-
-        //public void FiltrerEvenements()
-        //{
-        //    EvenementsFiltres.Clear();
-        //    var filtrés = SelectedTypeOnde == "Tous"
-        //        ? HistoriqueEvenements
-        //        : new ObservableCollection<SeismicEvent>(HistoriqueEvenements.Where(e => e.TypeOnde == SelectedTypeOnde));
-
-        //    foreach (var evt in filtrés)
-        //        EvenementsFiltres.Add(evt);
-        //}
 
 
     }

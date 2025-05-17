@@ -123,7 +123,7 @@
 
 
             <lvc:CartesianChart Grid.Row="1"
-                    Margin="10,90,600,20"
+                    Margin="10,90,465,20"
                     Series="{Binding Series}"
                     XAxes="{Binding XAxes}"
                     YAxes="{Binding YAxes}" 
