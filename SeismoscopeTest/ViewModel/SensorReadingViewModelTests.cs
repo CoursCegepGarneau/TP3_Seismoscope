@@ -21,6 +21,7 @@ namespace SeismoscopeTest.ViewModel
             var mockNavigationService = new Mock<INavigationService>();
             var mockUserSessionService = new Mock<IUserSessionService>();
             var mockAdjustementService = new Mock<ISensorAdjustementService>();
+            var mockHistoryService = new Mock<IHistoryService>();
 
             var station = new Station { Id = 1 };
             var sensors = new List<Sensor>
@@ -41,6 +42,7 @@ namespace SeismoscopeTest.ViewModel
                 mockSensorService.Object,
                 mockNavigationService.Object,
                 mockUserSessionService.Object,
+                mockHistoryService.Object,
                 mockAdjustementService.Object
             );
 
@@ -58,6 +60,8 @@ namespace SeismoscopeTest.ViewModel
             var mockNavigationService = new Mock<INavigationService>();
             var mockUserSessionService = new Mock<IUserSessionService>();
             var mockAdjustementService = new Mock<ISensorAdjustementService>();
+            var mockHistoryService = new Mock<IHistoryService>();
+
 
             var station = new Station { Id = 123 };
             var sensors = new List<Sensor>
@@ -78,6 +82,7 @@ namespace SeismoscopeTest.ViewModel
                 mockSensorService.Object,
                 mockNavigationService.Object,
                 mockUserSessionService.Object,
+                mockHistoryService.Object,
                 mockAdjustementService.Object
             );
 
@@ -97,6 +102,8 @@ namespace SeismoscopeTest.ViewModel
             var mockNavigationService = new Mock<INavigationService>();
             var mockUserSessionService = new Mock<IUserSessionService>();
             var mockAdjustementService = new Mock<ISensorAdjustementService>();
+            var mockHistoryService = new Mock<IHistoryService>();
+
 
             mockSensorService.Setup(s => s.GetAllSensors()).Returns(new List<Sensor>());
 
@@ -104,6 +111,7 @@ namespace SeismoscopeTest.ViewModel
                 mockSensorService.Object,
                 mockNavigationService.Object,
                 mockUserSessionService.Object,
+                mockHistoryService.Object,
                 mockAdjustementService.Object
             );
 
@@ -124,6 +132,8 @@ namespace SeismoscopeTest.ViewModel
             var mockNavigationService = new Mock<INavigationService>();
             var mockUserSessionService = new Mock<IUserSessionService>();
             var mockAdjustementService = new Mock<ISensorAdjustementService>();
+            var mockHistoryService = new Mock<IHistoryService>();
+
 
             mockSensorService.Setup(s => s.GetAllSensors()).Returns(new List<Sensor>());
 
@@ -131,6 +141,7 @@ namespace SeismoscopeTest.ViewModel
                 mockSensorService.Object,
                 mockNavigationService.Object,
                 mockUserSessionService.Object,
+                mockHistoryService.Object,
                 mockAdjustementService.Object
             );
 

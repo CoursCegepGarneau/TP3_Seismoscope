@@ -40,9 +40,16 @@ namespace Seismoscope.ViewModel
 
 
         private readonly ReaderService _csvReaderService;
-        private ObservableCollection<Sensor> _sensors = null!;
         private DispatcherTimer _readingTimer;
         private int _csvIndex = 0;
+
+        
+        
+
+        private ObservableCollection<Sensor> _sensors = null!;
+        
+
+
 
 
 
@@ -96,9 +103,8 @@ namespace Seismoscope.ViewModel
         public ObservableCollection<double> AmplitudeValues { get; set; } = new();
 
         public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
-        public ObservableCollection<SeismicEvent> EvenementsFiltres { get; set; } = new();
         
-        public string SelectedTypeOnde { get; set; } = "Tous"; // Pour ComboBox
+        
 
 
 
@@ -132,8 +138,43 @@ namespace Seismoscope.ViewModel
             {
                 _allHistory = value;
                 OnPropertyChanged();
+
+                ApplyFilters(); //Pour appliquer les filtres pour la table d'historique
             }
         }
+
+        public ObservableCollection<string> SensorNames { get; set; }
+        public ObservableCollection<string> TypeOndes { get; set; } = new();
+        
+
+
+        private string _selectedSensorName = "Tous";
+        public string SelectedSensorName
+        {
+            get => _selectedSensorName;
+            set
+            {
+                _selectedSensorName = value;
+                OnPropertyChanged();
+                ApplyFilters();
+                
+            }
+        }
+
+        private string _selectedTypeOnde = "Tous";
+        public string SelectedTypeOnde
+        {
+            get => _selectedTypeOnde;
+            set
+            {
+                _selectedTypeOnde = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        public ObservableCollection<HistoriqueEvenement> FilteredHistory { get; set; } = new();
+        
 
 
 
@@ -152,9 +193,11 @@ namespace Seismoscope.ViewModel
 
             AllHistory = new ObservableCollection<HistoriqueEvenement>(_historyService.GetAllHistory());
 
-            
-            
-            
+            SensorNames = new ObservableCollection<string> { "Tous" };
+
+
+
+
             NavigateToHomeViewCommand = new RelayCommand(() => navigationService.NavigateTo<HomeViewModel>());
 
             NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
@@ -163,9 +206,16 @@ namespace Seismoscope.ViewModel
 
             ChargerHistorique();
 
+            InitialiserFiltres();
 
-            
-            
+
+
+
+
+
+
+
+
         }
 
 
@@ -188,18 +238,43 @@ namespace Seismoscope.ViewModel
             }
         }
 
+        
+
+        private void InitialiserFiltres()
+        {
+            SensorNames.Clear();
+            SensorNames.Add("Tous");
+            foreach (var name in AllHistory.Select(h => h.SensorName).Distinct())
+                SensorNames.Add(name);
+
+            TypeOndes.Clear();
+            TypeOndes.Add("Tous");
+            foreach (var type in AllHistory.Select(h => h.TypeOnde).Distinct())
+                TypeOndes.Add(type);
+        }
+
+        public void ApplyFilters()
+        {
+            var filtre = AllHistory.AsEnumerable();
+
+            if (SelectedSensorName != "Tous")
+                filtre = filtre.Where(e => e.SensorName == SelectedSensorName);
+
+            if (SelectedTypeOnde != "Tous")
+                filtre = filtre.Where(e => e.TypeOnde == SelectedTypeOnde);
+
+            FilteredHistory.Clear();
+            foreach (var item in filtre)
+            {
+                FilteredHistory.Add(item);
+
+            }
+        }
+
         public override void OnNavigated(object? parameter = null)
         {
             ChargerHistorique();
         }
-
-
-
-
-
-
-
-
 
 
         private void NavigateToSensorManagementForAssignment()
@@ -208,21 +283,6 @@ namespace Seismoscope.ViewModel
             _userSessionService.IsAssignationMode = true;
             _navigationService.NavigateTo<SensorManagementViewModel>();
         }
-
-       
-        
-
-        public void FiltrerEvenements()
-        {
-            EvenementsFiltres.Clear();
-            var filtrés = SelectedTypeOnde == "Tous"
-                ? HistoriqueEvenements
-                : new ObservableCollection<SeismicEvent>(HistoriqueEvenements.Where(e => e.TypeOnde == SelectedTypeOnde));
-
-            foreach (var evt in filtrés)
-                EvenementsFiltres.Add(evt);
-        }
-
 
     }
 }

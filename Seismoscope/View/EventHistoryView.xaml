@@ -28,9 +28,9 @@
             <!-- ✅ Contenu principal -->
             <Grid Grid.Column="1" Margin="10,10,10,31">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="310*"/>
-                    <RowDefinition Height="851*"/>
+                    <RowDefinition Height="Auto" MinHeight="186"/>
+                    <RowDefinition Height="17*"/>
+                    <RowDefinition Height="43*"/>
                     <RowDefinition Height="0*"/>
                 </Grid.RowDefinitions>
 
@@ -51,21 +51,32 @@
 
                 <!-- ✅ DataGrid -->
 
+                <ComboBox
+                  Margin="10,151,981,0"
+                  ItemsSource="{Binding SensorNames}"
+                  SelectedItem="{Binding SelectedSensorName, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionChanged="SensorFilterChanged"
+                  VerticalAlignment="Top" Height="25">
+                    
+                </ComboBox>
+
                 <ComboBox Width="150"
-                  Margin="601,61,373,0"
-                  SelectedItem="{Binding SelectedTypeOnde, UpdateSourceTrigger=PropertyChanged}"
-                  SelectionChanged="TypeFilterChanged" Grid.Row="2" VerticalAlignment="Top">
+                 
+                  SelectedItem="{Binding SelectedTypeOnde}"
+                  Margin="184,151,807,0"
+                  VerticalAlignment="Top">
                     <ComboBox.ItemsSource>
                         <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                             <sys:String>Tous</sys:String>
                             <sys:String>P</sys:String>
                             <sys:String>S</sys:String>
-                            <sys:String>surface</sys:String>
+                            <sys:String>Surface</sys:String>
+                            <!-- Ajoute tous les noms de capteurs ici -->
                         </x:Array>
                     </ComboBox.ItemsSource>
                 </ComboBox>
 
-                <DataGrid ItemsSource="{Binding AllHistory}" AutoGenerateColumns="False" Margin="0,10,37,260" Grid.Row="1">
+                    <DataGrid ItemsSource="{Binding FilteredHistory}" AutoGenerateColumns="False" Margin="0,10,37,260" Grid.Row="1">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Date" Binding="{Binding DateHeure, StringFormat=dd/MM/yyyy}" Width="150" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Heure" Binding="{Binding DateHeure, StringFormat=HH:mm:ss}" Width="100" IsReadOnly="True"/>

@@ -40,5 +40,11 @@ namespace Seismoscope.View
             var vm = DataContext as SensorViewModel;
             vm?.FiltrerEvenements();
         }
+
+        private void SensorFilterChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var vm = DataContext as EventHistoryViewModel;
+            vm?.ApplyFilters();
+        }
     }
 }
