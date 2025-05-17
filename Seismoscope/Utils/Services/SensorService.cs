@@ -2,6 +2,7 @@
 using Seismoscope.Data.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Seismoscope.Utils.Services.Interfaces;
 
 namespace Seismoscope.Model.Services
 {

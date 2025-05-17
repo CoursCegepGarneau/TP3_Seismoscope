@@ -1,5 +1,6 @@
 ﻿using Seismoscope.Data.Repositories.Interfaces;
 using Seismoscope.Model.Interfaces;
+using Seismoscope.Utils.Services.Interfaces;
 using System.Collections.Generic;
 
 namespace Seismoscope.Model.Services

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Seismoscope.Model;
+using System.Collections.Generic;
 
-namespace Seismoscope.Model.Interfaces
+namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface IStationService
     {

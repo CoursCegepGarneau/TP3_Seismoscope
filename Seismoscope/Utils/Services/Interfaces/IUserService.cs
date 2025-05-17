@@ -1,7 +1,7 @@
 ﻿using Seismoscope.Model;
 using System;
 
-namespace Seismoscope.Model.Interfaces
+namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface IUserService
     {

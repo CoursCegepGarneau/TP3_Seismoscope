@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Services.Interfaces;
-using Seismoscope.Services.Interfaces;
+
 
 
 namespace SeismoscopeTest.ViewModel

@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 
 namespace Seismoscope.Model
 {
-    public class SeismicEvent
+    public class HistoriqueEvenement
     {
-        public string TypeOnde { get; set; }
-        public double Amplitude { get; set; }
-        public string Note { get; set; }
+        public int Id { get; set; }
+        public DateTime DateHeure { get; set; }
 
-        public DateTime Timestamp { get; set; }
+
+        public string TypeOnde { get; set; } = "";
+        public double Amplitude { get; set; }
+        public string Note { get; set; } = "";
+
+
+        public double SeuilAuMoment { get; set; }
+        public int SensorId { get; set; }
         public string SensorName { get; set; }
 
-        public double SeuilAtteint { get; set; }
-
+        public Sensor? Sensor { get; set; }
 
         // Optionnel : pour traitement plus facile
         public List<string> Règles => ParseRègles(Note);
@@ -30,6 +35,10 @@ namespace Seismoscope.Model
                 .Where(r => r.StartsWith("Règle")) // filtre les vraies règles
                 .ToList();
         }
-    }
 
+
+        
+        
+        
+    }
 }
