@@ -151,5 +151,53 @@ namespace SeismoscopeTest.ViewModel
             // Assert
             Assert.Equal(sensor, vm.SelectedSensor);
         }
+
+
+        [Fact]
+        public void TraiterLigne_ShouldAddAmplitudeAndEvent_IfAboveThreshold()
+        {
+            // Arrange
+            var mockSensorService = new Mock<ISensorService>();
+            var mockNavigationService = new Mock<INavigationService>();
+            var mockUserSessionService = new Mock<IUserSessionService>();
+            var mockAdjustementService = new Mock<ISensorAdjustementService>();
+            var mockHistoryService = new Mock<IHistoryService>();
+
+            mockSensorService.Setup(s => s.GetAllSensors()).Returns(new List<Sensor>());
+
+            // 💡 Retourne une liste vide de messages pour éviter le null
+            mockAdjustementService
+                .Setup(a => a.AdjustSensors(It.IsAny<SeismicEvent>(), It.IsAny<Sensor>()))
+                .Returns(new List<string>());
+
+            var vm = new SensorReadingViewModel(
+                mockSensorService.Object,
+                mockNavigationService.Object,
+                mockUserSessionService.Object,
+                mockHistoryService.Object,
+                mockAdjustementService.Object
+            );
+
+            vm.SelectedSensor = new Sensor { Treshold = 10, Id = 1, Name = "Sensor 1" };
+
+            var seismicEvent = new SeismicEvent
+            {
+                Amplitude = 20,
+                TypeOnde = "P"
+            };
+
+            // Act
+            vm.TraiterLigne(0, seismicEvent);
+
+            // Assert
+            Assert.Single(vm.Amplitudes);
+            Assert.Single(vm.Timestamps);
+            Assert.Single(vm.EvenementsFiltres);
+            Assert.Empty(vm.MessagesUI); // ✅ on s'attend à 0 message car le mock renvoie une liste vide
+
+            mockAdjustementService.Verify(a => a.AdjustSensors(seismicEvent, vm.SelectedSensor), Times.Once);
+            mockHistoryService.Verify(h => h.AjouterHistory(It.IsAny<HistoriqueEvenement>()), Times.Once);
+        }
+
     }
 }

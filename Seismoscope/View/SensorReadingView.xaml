@@ -9,7 +9,7 @@
 
     <materialDesign:DrawerHost>
 
-        <!-- ✅ Menu latéral -->
+        <!--Menu-->
         <materialDesign:DrawerHost.LeftDrawerContent>
             <StackPanel Margin="20">
                 <TextBlock Text="☰ Seismoscope"
@@ -29,7 +29,7 @@
             </StackPanel>
         </materialDesign:DrawerHost.LeftDrawerContent>
 
-        <!-- ✅ Contenu principal -->
+        
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="72"/>
@@ -40,7 +40,7 @@
 
 
 
-            <!-- ☰ Bouton -->
+
             <StackPanel Grid.Row="0" Height="58" VerticalAlignment="Top">
 
 
@@ -119,6 +119,9 @@
                 </StackPanel>
             </Grid>
 
+            <ListBox ItemsSource="{Binding MessagesUI}" Height="120" Margin="650,147,6,291" Grid.Row="1" />
+
+
             <lvc:CartesianChart Grid.Row="1"
                     Margin="10,90,600,20"
                     Series="{Binding Series}"
@@ -128,15 +131,10 @@
                     AnimationsSpeed="0:0:0.5"
                     TooltipPosition="Top">
             </lvc:CartesianChart>
-            <DataGrid ItemsSource="{Binding EvenementsFiltres}" AutoGenerateColumns="False" Margin="536,90,13,429" Grid.Row="1">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Binding="{Binding Timestamp, StringFormat=dd/MM/yyyy}" Width="100"/>
-                    <DataGridTextColumn Header="Heure" Binding="{Binding Timestamp, StringFormat=HH:mm:ss}" Width="80"/>
-                    <DataGridTextColumn Header="Capteur" Binding="{Binding SensorName}" Width="120"/>
-                    <DataGridTextColumn Header="Amplitude" Binding="{Binding Amplitude}" Width="100"/>
-                    <DataGridTextColumn Header="Seuil Atteint" Binding="{Binding SeuilAtteint}" Width="120"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <TextBlock Text="Messages: " 
+                FontSize="18" FontWeight="Bold" 
+                Foreground="Black" Margin="650,110,0,416"
+                HorizontalAlignment="Left" Grid.Row="1"/>
         </Grid>
     </materialDesign:DrawerHost>
 </UserControl>

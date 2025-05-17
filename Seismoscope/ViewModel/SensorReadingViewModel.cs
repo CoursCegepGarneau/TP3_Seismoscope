@@ -116,6 +116,18 @@ namespace Seismoscope.ViewModel
         }
 
 
+        private string _messageRegle;
+        public string MessageRegle
+        {
+            get => _messageRegle;
+            set
+            {
+                _messageRegle = value;
+                OnPropertyChanged();
+            }
+        }
+
+
 
 
 
@@ -181,25 +193,19 @@ namespace Seismoscope.ViewModel
                 _csvFilePath = dialog.FileName;
                 //_donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
                 DonneesImportees = true;
+                
+                //_donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath, SelectedSensor, _sensorAdjustementService, out messages);
 
-                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath, SelectedSensor, _sensorAdjustementService);
+                _donneesSismiques = CsvUtils.LireLecturesDepuisCsv(_csvFilePath);
+
 
                 MessageBox.Show("Fichier chargé avec succès.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                
             }
         }
 
-        private void StartDetection()
-        {
-            if (SelectedSensor == null || string.IsNullOrWhiteSpace(_csvFilePath))
-            {
-                MessageBox.Show("Veuillez sélectionner un capteur et charger un fichier CSV.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            ///_vibrationService.StartDetection(SelectedSensor, _csvFilePath);
-            MessageBox.Show("StartDetection.", "Info", MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
-
+        
 
         public ObservableCollection<ISeries> SensorSeries { get; set; }
         public Axis[] XAxes { get; set; }
@@ -240,7 +246,7 @@ namespace Seismoscope.ViewModel
 
 
 
-        private async Task StartReadingAsync()
+        /*private async Task StartReadingAsync()
         {
             int maxPoints = 30; // On affiche les 30 dernières lectures
 
@@ -309,7 +315,83 @@ namespace Seismoscope.ViewModel
             }
 
             IsReading = false;
+        }*/
+
+
+        public ObservableCollection<string> MessagesUI { get; set; } = new();
+
+        public void TraiterLigne(int index, SeismicEvent data)
+        {
+            int maxPoints = 30;
+            if (Amplitudes.Count >= maxPoints)
+            {
+                Amplitudes.RemoveAt(0);
+                Timestamps.RemoveAt(0);
+            }
+
+            Amplitudes.Add(data.Amplitude);
+            Timestamps.Add($"t{index}");
+
+            if (data.Amplitude > SelectedSensor.Treshold)
+            {
+                EvenementsFiltres.Add(new SeismicEvent
+                {
+                    Timestamp = DateTime.Now,
+                    SensorName = SelectedSensor.Name,
+                    TypeOnde = data.TypeOnde,
+                    Amplitude = data.Amplitude,
+                    SeuilAtteint = SelectedSensor.Treshold
+                });
+
+                _historyService.AjouterHistory(new HistoriqueEvenement
+                {
+                    DateHeure = DateTime.Now,
+                    Amplitude = data.Amplitude,
+                    TypeOnde = data.TypeOnde,
+                    SeuilAuMoment = SelectedSensor.Treshold,
+                    SensorId = SelectedSensor.Id,
+                    SensorName = SelectedSensor.Name
+                });
+            }
+
+            var messages = _sensorAdjustementService.AdjustSensors(data, SelectedSensor);
+            foreach (var msg in messages)
+            {
+                MessagesUI.Add(msg); // Pour afficher les messages de retroaction
+            }
         }
+
+        private async Task StartReadingAsync()
+        {
+            int maxPoints = 30;
+
+            if (_donneesSismiques == null || _donneesSismiques.Count == 0 || SelectedSensor == null)
+                return;
+
+            _cts = new CancellationTokenSource();
+            IsReading = true;
+
+            for (int i = 0; i < _donneesSismiques.Count; i++)
+            {
+                if (_cts.IsCancellationRequested)
+                    break;
+
+                var data = _donneesSismiques[i];
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    TraiterLigne(i, data);
+                });
+
+                // ⏱ Fréquence dynamique (à recalculer après ajustement éventuel)
+                double seconds = 1.0 / SelectedSensor.Frequency;
+                int intervalMs = (int)(seconds * 1000);
+                await Task.Delay(intervalMs);
+            }
+
+            IsReading = false;
+        }
+
 
         //public void FiltrerEvenements()
         //{
