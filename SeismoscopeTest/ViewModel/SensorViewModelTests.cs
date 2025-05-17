@@ -3,7 +3,7 @@ using Xunit;
 using Seismoscope.ViewModel;
 using Seismoscope.Model.Interfaces;
 using Seismoscope.Utils.Commands;
-using Seismoscope.Services.Interfaces;
+
 using System.Collections.ObjectModel;
 using Seismoscope.Model;
 using Seismoscope.Utils;

@@ -9,7 +9,7 @@
 
     <materialDesign:DrawerHost>
 
-        <!-- ✅ Menu latéral -->
+        <!--Menu-->
         <materialDesign:DrawerHost.LeftDrawerContent>
             <StackPanel Margin="20">
                 <TextBlock Text="☰ Seismoscope"
@@ -29,7 +29,7 @@
             </StackPanel>
         </materialDesign:DrawerHost.LeftDrawerContent>
 
-        <!-- ✅ Contenu principal -->
+        
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="72"/>
@@ -40,7 +40,7 @@
 
 
 
-            <!-- ☰ Bouton -->
+
             <StackPanel Grid.Row="0" Height="58" VerticalAlignment="Top">
 
 
@@ -79,9 +79,9 @@
 
                 <!-- Bouton à gauche -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
-                    <Button Content="Mes capteurs"
+                    <Button Content="Historique"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Command="{Binding MySensorsCommand}"
+                        Command="{Binding NavigateToHistoryViewCommand}"
                         Padding="8,2"
                         Background="#F5F5F5"/>
                 </StackPanel>
@@ -99,8 +99,8 @@
 
 
                     <Button Content="Démarrer lecture"
-                        Command="{Binding AssignSensorToStationCommand}"
-                        IsEnabled="{Binding SelectedSensor}" 
+                        Command="{Binding StartReadingCommand}"
+                        IsEnabled="{Binding DonneesImportees}" 
                         Margin="0,0,10,0"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
                         Padding="8,2"
@@ -110,22 +110,31 @@
 
                     <Button Content="Arrêter lecture"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                        IsEnabled="{Binding IsReading}" 
                         Background="#E53935" 
                         Foreground="White"
                         Padding="8,2"
                         Margin="5"
-                        Command="{Binding DeleteSensorCommand}" />
+                        Command="{Binding StopReadingCommand}" />
                 </StackPanel>
             </Grid>
 
+            <ListBox ItemsSource="{Binding MessagesUI}" Height="120" Margin="650,147,6,291" Grid.Row="1" />
+
+
             <lvc:CartesianChart Grid.Row="1"
-                    Margin="10,90,0,20"
-                    Series="{Binding SensorSeries}"
+                    Margin="10,90,465,20"
+                    Series="{Binding Series}"
                     XAxes="{Binding XAxes}"
                     YAxes="{Binding YAxes}" 
                     LegendPosition="Right"
+                    AnimationsSpeed="0:0:0.5"
                     TooltipPosition="Top">
             </lvc:CartesianChart>
+            <TextBlock Text="Messages: " 
+                FontSize="18" FontWeight="Bold" 
+                Foreground="Black" Margin="650,110,0,416"
+                HorizontalAlignment="Left" Grid.Row="1"/>
         </Grid>
     </materialDesign:DrawerHost>
 </UserControl>

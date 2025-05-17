@@ -13,13 +13,17 @@ using Seismoscope.Utils.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Seismoscope.Services;
-using Seismoscope.Services.Interfaces;
 using Seismoscope.Utils.Enums;
 using Seismoscope.View;
 using System.Windows;
 using System.Globalization;
 using System.Diagnostics.Metrics;
 using Seismoscope.Utils.Services;
+using LiveChartsCore;
+using Microsoft.Win32;
+using LiveChartsCore.SkiaSharpView;
+using SkiaSharp;
+using LiveChartsCore.SkiaSharpView.Painting;
 
 namespace Seismoscope.ViewModel
 {
@@ -35,6 +39,8 @@ namespace Seismoscope.ViewModel
         private ObservableCollection<Sensor> _sensors = null!;
         private DispatcherTimer _readingTimer;
         private int _csvIndex = 0;
+
+
 
         public ObservableCollection<Sensor> Sensors
         {
@@ -82,9 +88,10 @@ namespace Seismoscope.ViewModel
         }
 
         public ICommand NavigateToHomeViewCommand { get; set; }
+        public ICommand NavigateToHistoryViewCommand { get; set; }
+
         public ICommand ChargerDonneesCommand { get; set; }
-        public ICommand StartReadingCommand { get; }
-        public ICommand StopReadingCommand { get; }
+        
         public ICommand? NavigateToSensorManagementViewCommand { get; }
         public ICommand? NavigateToSensorManagementForAssignmentCommand { get; }
         public ICommand? AddSensorToStationCommand { get; }
@@ -97,6 +104,78 @@ namespace Seismoscope.ViewModel
 
         public ICommand AnalyzeSensorCommand { get; }
 
+        public ICommand LoadCsvCommand { get; }
+
+        private string _csvFilePath;
+
+
+        private List<SeismicEvent> _donneesSismiques;
+        public ObservableCollection<double> AmplitudeValues { get; set; } = new();
+
+        public ObservableCollection<SeismicEvent> HistoriqueEvenements { get; set; } = new();
+        public ObservableCollection<SeismicEvent> EvenementsFiltres { get; set; } = new();
+        public string SelectedTypeOnde { get; set; } = "Tous"; // Pour ComboBox
+
+
+
+        private int _tempsSimulé = 0;
+
+        public ObservableCollection<double> Amplitudes { get; set; } = new();
+        public ObservableCollection<string> Timestamps { get; set; } = new();
+
+
+        private CancellationTokenSource? _cts;
+
+        
+
+
+
+        private bool _donneesImportees;
+        private bool _isReading;
+
+        public bool DonneesImportees
+        {
+            get => _donneesImportees;
+            set
+            {
+                _donneesImportees = value;
+                OnPropertyChanged();
+
+            }
+        }
+
+        public bool IsReading
+        {
+            get => _isReading;
+            set
+            {
+                _isReading = value;
+                OnPropertyChanged();
+
+            }
+        }
+
+        
+
+        private readonly Dictionary<Sensor, SKColor> _sensorColorMap = new();
+        private readonly Random _rand = new();
+
+        private SKColor GenerateRandomColor()
+        {
+            // Évite les couleurs trop pâles ou trop proches
+            byte r = (byte)_rand.Next(50, 200);
+            byte g = (byte)_rand.Next(50, 200);
+            byte b = (byte)_rand.Next(50, 200);
+            return new SKColor(r, g, b);
+        }
+
+
+
+
+
+
+
+
         public SensorViewModel(ISensorService sensorService, INavigationService navigationService,IDialogService dialogService, IUserSessionService userSessionService)
         {
             _sensorService = sensorService;
@@ -104,13 +183,13 @@ namespace Seismoscope.ViewModel
             _dialogService = dialogService;
             _userSessionService = userSessionService;
             _csvReaderService = new ReaderService();
-            StartReadingCommand = new RelayCommand(StartReadingData);
-            StopReadingCommand = new RelayCommand(StopReadingData);
+            
             Sensors = new ObservableCollection<Sensor>(_sensorService.GetAllSensors());
             ChargerDonneesCommand = new RelayCommand(ChargerDonnees);
-            StartReadingCommand = new RelayCommand(StartReadingData);
-            StopReadingCommand = new RelayCommand(StopReadingData);
+            
             NavigateToHomeViewCommand = new RelayCommand(() => navigationService.NavigateTo<HomeViewModel>());
+            NavigateToHistoryViewCommand = new RelayCommand(() => navigationService.NavigateTo<EventHistoryViewModel>());
+
             UpdateSensorStatusCommand = new RelayCommand(UpdateSensorStatus);
             ChangeFrequencyCommand = new RelayCommand(ChangeFrequency);
             ChangeTresholdCommand = new RelayCommand(ChangeTreshold);
@@ -124,6 +203,8 @@ namespace Seismoscope.ViewModel
                 if (sensor != null)
                     _navigationService.NavigateTo<SensorReadingViewModel>(sensor);
             });
+
+
         }
 
 
@@ -301,5 +382,22 @@ namespace Seismoscope.ViewModel
         {
             return SelectedSensor != null && SelectedSensor.SensorStatus == false;
         }
+
+
+
+        
+
+        public void FiltrerEvenements()
+        {
+            EvenementsFiltres.Clear();
+            var filtrés = SelectedTypeOnde == "Tous"
+                ? HistoriqueEvenements
+                : new ObservableCollection<SeismicEvent>(HistoriqueEvenements.Where(e => e.TypeOnde == SelectedTypeOnde));
+
+            foreach (var evt in filtrés)
+                EvenementsFiltres.Add(evt);
+        }
+
+
     }
 }

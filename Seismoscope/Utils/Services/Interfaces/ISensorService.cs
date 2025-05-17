@@ -1,4 +1,6 @@
-﻿namespace Seismoscope.Model.Interfaces
+﻿using Seismoscope.Model;
+
+namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface ISensorService
     {

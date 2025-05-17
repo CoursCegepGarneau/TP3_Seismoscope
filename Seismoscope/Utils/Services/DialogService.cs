@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Seismoscope.Services.Interfaces;
+using Seismoscope.Utils.Services.Interfaces;
 using Seismoscope.View;
 
 namespace Seismoscope.Services

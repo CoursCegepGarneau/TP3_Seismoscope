@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Seismoscope.Services.Interfaces
+
+namespace Seismoscope.Utils.Services.Interfaces
 {
     public interface IDialogService
     {
