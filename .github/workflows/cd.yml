@@ -32,7 +32,7 @@ jobs:
 
     - name: Créer App.config depuis secret
       run: |
-       cat <<EOF> Seismoscope/App.config 
+       cat <<EOF > Seismoscope/App.config 
        ${{ secrets.APP_CONFIG_PROD }}
        EOF
       shell: bash
